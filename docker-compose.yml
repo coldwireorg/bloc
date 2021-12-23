@@ -26,7 +26,10 @@ services:
       - DB_URL=postgresql://postgres:12345@bloc-db:5432/bloc
       - STORAGE_DIR=/opt/bloc/storage
       - SERVER_DOMAIN=coldwire.org
-      - SERVER_HTTPS=false
+      - SERVER_HTTPS=true
+      - STORAGE_QUOTA=4096
+    ports:
+      - 3001:3000
     depends_on:
       - bloc-db
     links:
@@ -36,7 +39,7 @@ services:
     build:
       context: ./bloc-frontend/
       args:
-        - API_BASE=http://bloc-api:3000/api
+        - API_BASE=https://bloc.coldwire.org/api
     container_name: bloc-front
     ports:
       - 4000:3000
