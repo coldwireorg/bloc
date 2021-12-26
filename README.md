@@ -34,13 +34,13 @@ The goal is to have a stable, simple to use and secure place to store our files 
 - File uploading / downloading
 - File deleting
 - Favorite system (add the files to a list of favorites)
-- Private file sharing (the file encryption key is re-encrypted using the receiver public key)
 
 ### Planned features
-- Making possible to scale bloc on nomad/kubernetes clusters 
+- Private file sharing (the file encryption key is re-encrypted using the receiver public key)
 - Public file sharing (sharing a file using a link, this one expose the file's encryption key!)
+- Making possible to scale bloc on nomad/kubernetes clusters 
 - Moderation / Admin panel for configuring
-- Authentification from others server of the federated network
+- Authentification from others servers of the federated network
 - Sharing files over the federated network
 - Automated backup over the network (encrypted files are sliced into many little parts and sent to a swarm of servers)
 
@@ -50,7 +50,7 @@ The goal is to have a stable, simple to use and secure place to store our files 
 
 ### Simple way: with docker-compose
 ```sh
-git clone https://github.com/coldwireorg/bloc.git
+git clone --recurse-submodules https://github.com/coldwireorg/bloc.git
 cd bloc
 ```
 
@@ -64,6 +64,30 @@ docker-compose up -d
 
 #### Web server / load balancing
 It's up to you to setup your own web server with nginx, apache, træfik, etc.
+
+nginx exemple:
+```conf
+upstream bloc-frontend {
+  server 127.0.0.1:3000;
+}
+
+upstream bloc-backend {
+  server 127.0.0.1:3001;
+}
+
+server {
+  server_name bloc.coldwire.org;
+  location / {
+    proxy_pass http://bloc-fontend;
+  }
+
+  location /api {
+    proxy_pass http://bloc-backend;
+  }
+
+  listen 80;
+}
+```
 
 #### Environment variables:
 ##### Backend
@@ -84,7 +108,7 @@ STORAGE_QUOTA=4096 # Total file size limit for users in Mb
 ##### Fontend
 *theses are the envrionment variables for the frontend (in `bloc-front` in the `docker-compose.yml` file)*
 ```sh
-API_BASE=http://bloc-api:3000/api # address of the backend server, if you want to change it you must re-build the container by excuting "docker-compose build" command
+API_BASE=http://bloc.coldwire.org/api # address of the backend server, if you want to change it you must re-build the container by excuting "docker-compose build" command
 ```
 
 ## A note about security
