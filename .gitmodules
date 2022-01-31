@@ -1,6 +1,6 @@
 [submodule "bloc-backend"]
 	path = bloc-backend
-	url = https://github.com/coldwireorg/bloc-backend.git
+	url = https://codeberg.org/coldwire/bloc-backend.git
 [submodule "bloc-frontend"]
 	path = bloc-frontend
-	url = https://github.com/coldwireorg/bloc-frontend.git
+	url = https://codeberg.org/coldwire/bloc-frontend.git
