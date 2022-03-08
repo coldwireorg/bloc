@@ -40,6 +40,15 @@ func Init() {
 			Path:  os.Getenv("BLOC_STORAGE_PATH"),
 			Quota: os.Getenv("BLOC_STORAGE_QUOTA"),
 		},
+		Polar: PolarConfig{
+			Uri:    os.Getenv("BLOC_POLAR_URI"),
+			Secret: os.Getenv("BLOC_POLAR_SECRET"),
+		},
+		Oauth: oauth2.Config{
+			ClientID:     os.Getenv("BLOC_OAUTH_CLIENT"),
+			ClientSecret: os.Getenv("BLOC_OAUTH_SECRET"),
+			RedirectURL:  os.Getenv("BLOC_OAUTH_CALLBACK"),
+		},
 	}
 }
 
@@ -47,6 +56,7 @@ type Config struct {
 	Server   ServerConfig
 	Database DatabaseConfig
 	Storage  StorageConfig
+	Polar    PolarConfig
 	Oauth    oauth2.Config
 }
 
@@ -76,4 +86,9 @@ type DatabaseSqliteConfig struct {
 type StorageConfig struct {
 	Path  string // Path where to store encrypted files
 	Quota string // Total size of files that users cans upload
+}
+
+type PolarConfig struct {
+	Uri    string // unix socket/address of the polar node
+	Secret string // Opetional secret to access a private polar node
 }

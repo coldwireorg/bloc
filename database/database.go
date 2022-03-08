@@ -14,6 +14,7 @@ import (
 
 // Expose database to the whole project
 var DB *gorm.DB
+var Ready bool = false
 
 // Connect to the database
 func Connect() error {
@@ -52,10 +53,12 @@ func Connect() error {
 		}
 
 		if err != nil {
+			Ready = false
 			log.Err(err).Msg(err.Error())
 			time.Sleep(5 * time.Second)
 		} else {
 			log.Info().Msg("Successfully connected to the database!")
+			Ready = true
 			break
 		}
 	}

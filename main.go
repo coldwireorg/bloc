@@ -3,6 +3,8 @@ package main
 import (
 	"bloc/config"
 	"bloc/database"
+	"bloc/routes"
+	"bloc/utils"
 	"os"
 
 	"github.com/gofiber/fiber/v2"
@@ -23,12 +25,21 @@ func init() {
 }
 
 func main() {
+	isReady := utils.Migrate()
+
 	// Create fiber instance
 	app := fiber.New(fiber.Config{
 		BodyLimit: (1024 * 1024 * 1024) * 8, // Limit file upload size (8Gb)
 	})
 
-	app.Use(cors.New()) // Add cors
+	// Include cors
+	app.Use(cors.New())
 
-	log.Info().Err(app.Listen(config.Conf.Server.Address + ":" + config.Conf.Server.Port))
+	// Setup API routes
+	routes.Api(app)
+
+	// Wait for database to be clean/ready
+	if isReady {
+		log.Info().Err(app.Listen(config.Conf.Server.Address + ":" + config.Conf.Server.Port))
+	}
 }
