@@ -1,1 +1,0 @@
-docker container exec -i bloc-db psql -U postgres
