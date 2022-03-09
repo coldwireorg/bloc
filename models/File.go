@@ -10,12 +10,11 @@ import (
 /* File model */
 
 type File struct {
-	Id     string `gorm:"not null;unique;primaryKey"`
-	Parent string
-	Name   string    `gorm:"not null;"`
-	Type   string    `gorm:"not null;"`
-	Size   int64     `gorm:"not null;"`
-	Keys   []FileKey `gorm:"foreignKey:FileId;references:Id;constraint:OnDelete:CASCADE;"`
+	Id   string    `gorm:"not null;unique;primaryKey"`
+	Name string    `gorm:"not null;"`
+	Type string    `gorm:"not null;"`
+	Size int64     `gorm:"not null;"`
+	Keys []FileKey `gorm:"foreignKey:FileId;references:Id;constraint:OnDelete:CASCADE;"`
 }
 
 func (f File) Create() error {
