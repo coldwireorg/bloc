@@ -44,10 +44,12 @@ func Init() {
 			Uri:    os.Getenv("BLOC_POLAR_URI"),
 			Secret: os.Getenv("BLOC_POLAR_SECRET"),
 		},
-		Oauth: oauth2.Config{
-			ClientID:     os.Getenv("BLOC_OAUTH_CLIENT"),
-			ClientSecret: os.Getenv("BLOC_OAUTH_SECRET"),
-			RedirectURL:  os.Getenv("BLOC_OAUTH_CALLBACK"),
+		Oauth: OauthConfig{
+			Server: os.Getenv("BLOC_OAUTH_SERVER"),
+			Config: oauth2.Config{
+				ClientID:    os.Getenv("BLOC_OAUTH_CLIENT"),
+				RedirectURL: os.Getenv("BLOC_OAUTH_CALLBACK"),
+			},
 		},
 	}
 }
@@ -57,7 +59,7 @@ type Config struct {
 	Database DatabaseConfig
 	Storage  StorageConfig
 	Polar    PolarConfig
-	Oauth    oauth2.Config
+	Oauth    OauthConfig
 }
 
 type ServerConfig struct {
@@ -91,4 +93,9 @@ type StorageConfig struct {
 type PolarConfig struct {
 	Uri    string // unix socket/address of the polar node
 	Secret string // Opetional secret to access a private polar node
+}
+
+type OauthConfig struct {
+	Config oauth2.Config
+	Server string
 }

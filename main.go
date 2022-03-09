@@ -7,6 +7,7 @@ import (
 	"bloc/utils"
 	"os"
 
+	"codeberg.org/coldwire/cwauth"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/rs/zerolog"
@@ -22,6 +23,11 @@ func init() {
 
 	// Connect to database
 	go database.Connect()
+
+	// Init oauth client
+	if config.Conf.Oauth.Server != "" {
+		go cwauth.InitOauth2(config.Conf.Oauth.Config, config.Conf.Oauth.Server)
+	}
 }
 
 func main() {

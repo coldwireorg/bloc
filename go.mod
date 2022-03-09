@@ -3,8 +3,10 @@ module bloc
 go 1.17
 
 require (
+	codeberg.org/coldwire/cwauth v0.0.0-20220308210551-1fc53c8ab924
 	github.com/gofiber/fiber/v2 v2.28.0
 	github.com/joho/godotenv v1.4.0
+	github.com/kataras/jwt v0.1.2
 	github.com/lithammer/shortuuid/v4 v4.0.0
 	github.com/rs/zerolog v1.26.1
 	golang.org/x/oauth2 v0.0.0-20220223155221-ee480838109b
@@ -15,6 +17,7 @@ require (
 
 require (
 	github.com/andybalholm/brotli v1.0.4 // indirect
+	github.com/coreos/go-oidc/v3 v3.1.0 // indirect
 	github.com/golang/protobuf v1.4.2 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
@@ -38,4 +41,5 @@ require (
 	golang.org/x/text v0.3.7 // indirect
 	google.golang.org/appengine v1.6.6 // indirect
 	google.golang.org/protobuf v1.25.0 // indirect
+	gopkg.in/square/go-jose.v2 v2.5.1 // indirect
 )
