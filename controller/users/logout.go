@@ -1,7 +1,19 @@
 package users
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"bloc/config"
+	"bloc/utils"
+
+	"codeberg.org/coldwire/cwauth"
+	"github.com/gofiber/fiber/v2"
+)
 
 func Logout(c *fiber.Ctx) error {
-	return c.SendStatus(302)
+	utils.DelCookie(c, "token")
+
+	if config.Conf.Oauth.Server != "" {
+		return c.Redirect(cwauth.LogoutURL())
+	}
+
+	return c.Redirect("/")
 }

@@ -17,10 +17,9 @@ func Api(app *fiber.App) {
 
 	// Auth > /api/user/auth
 	auth := user.Group("/auth")
-	auth.Post("/register", users.Register)
-	auth.Post("/login", users.Login)
-	auth.Get("/login", users.Login)
-	auth.Post("/logout", users.Logout)
+	auth.Post("/register", middlewares.Allowed, users.Register)
+	auth.All("/login", middlewares.Allowed, users.Login)
+	auth.Get("/logout", users.Logout)
 
 	// Oauth2 > /api/user/auth/oauth2
 	oauth := auth.Group("/oauth2")

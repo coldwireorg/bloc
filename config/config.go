@@ -24,7 +24,7 @@ func Init() {
 			Port:    os.Getenv("BLOC_SERVER_PORT"),
 		},
 		Database: DatabaseConfig{
-			Type: os.Getenv("BLOC_DATABASE_TYPE"),
+			Driver: os.Getenv("BLOC_DATABASE_DRIVER"),
 			Postgres: DatabasePostgresConfig{
 				Address:  os.Getenv("BLOC_DATABASE_ADDRESS"),
 				Port:     os.Getenv("BLOC_DATABASE_PORT"),
@@ -68,7 +68,7 @@ type ServerConfig struct {
 }
 
 type DatabaseConfig struct {
-	Type     string                 // postgres or sqlite
+	Driver   string                 // postgres or sqlite
 	Postgres DatabasePostgresConfig // Postgres config
 	Sqlite   DatabaseSqliteConfig   // Sqlite config
 }

@@ -33,13 +33,17 @@ func Connect() error {
 
 	// Run until the database is connected
 	for {
-		if config.Conf.Database.Type == "sqlite" || config.Conf.Database.Type == "" {
+
+		log.Info().Msg("Using driver: " + config.Conf.Database.Driver)
+
+		switch config.Conf.Database.Driver {
+		case "sqlite":
 			if config.Conf.Database.Sqlite.Path != "" {
 				DB, err = gorm.Open(sqlite.Open(config.Conf.Database.Sqlite.Path), gconf)
 			} else {
 				log.Fatal().Msg("Please set a path to the database file or use Postgres if you want a remote database")
 			}
-		} else {
+		case "postgres":
 			DSN := []string{
 				"postgresql://",
 				config.Conf.Database.Postgres.Address,
@@ -50,6 +54,8 @@ func Connect() error {
 			}
 
 			DB, err = gorm.Open(postgres.Open(strings.Join(DSN[:], "")), gconf)
+		default:
+			log.Fatal().Msg("Database driver not found!")
 		}
 
 		if err != nil {

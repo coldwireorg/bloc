@@ -1,22 +1,20 @@
 package users
 
 import (
-	"bloc/config"
-
-	"codeberg.org/coldwire/cwauth"
 	"github.com/gofiber/fiber/v2"
 	"github.com/rs/zerolog/log"
 )
 
 func Login(c *fiber.Ctx) error {
-	if config.Conf.Oauth.Server != "" {
-		url, err := cwauth.AuthURL()
-		if err != nil {
-			log.Err(err).Msg(err.Error())
-			c.Redirect("/")
-		}
+	// Structure of the JSON request
+	request := struct {
+		Username string `json:"username"`
+		Password string `json:"password"`
+	}{}
 
-		return c.Redirect(url)
+	err := c.BodyParser(&request)
+	if err != nil {
+		log.Err(err).Msg(err.Error())
 	}
 
 	return c.SendStatus(200)
