@@ -3,12 +3,12 @@ package models
 import "bloc/database"
 
 type User struct {
-	Name       string `gorm:"not null;unique;primaryKey"`
-	Password   string `gorm:"not null"`
-	PrivateKey string `gorm:"not null"`
-	PublicKey  string `gorm:"not null"`
-	Quota      int64  `gorm:"not null"`
-	Home       Folder `gorm:"not null;polymorphic:Home;"`
+	Name       string       `gorm:"not null;unique;primaryKey"`
+	Password   string       `gorm:"not null"`
+	PrivateKey string       `gorm:"not null"`
+	PublicKey  string       `gorm:"not null"`
+	Quota      int64        `gorm:"not null"`
+	Home       FolderAccess `gorm:"not null;foreignKey:Id"`
 }
 
 func (u User) Create() error {

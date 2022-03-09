@@ -17,6 +17,7 @@ require (
 
 require (
 	github.com/BurntSushi/toml v0.3.1
+	github.com/alexedwards/argon2id v0.0.0-20211130144151-3585854a6387
 	github.com/minio/minio-go/v7 v7.0.23
 )
 

@@ -3,13 +3,11 @@ package models
 import "bloc/database"
 
 type Folder struct {
-	Id       string `gorm:"not null;unique;primaryKey"`
-	Name     string `gorm:"not null;"`
-	Parent   string
-	HomeID   int
-	HomeType string
-	Folders  []Folder `gorm:"foreignKey:Parent;references:Id;constraint:OnDelete:CASCADE;"`
-	Files    []File   `gorm:"foreignKey:Parent;references:Id;constraint:OnDelete:CASCADE;"`
+	Id      string `gorm:"not null;unique;primaryKey"`
+	Name    string `gorm:"not null;"`
+	Parent  string
+	Folders []Folder `gorm:"foreignKey:Parent;references:Id;constraint:OnDelete:CASCADE;"`
+	Files   []File   `gorm:"foreignKey:Parent;references:Id;constraint:OnDelete:CASCADE;"`
 }
 
 func (f Folder) Create() error {

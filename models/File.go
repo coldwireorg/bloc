@@ -11,7 +11,6 @@ import (
 
 type File struct {
 	Id     string `gorm:"not null;unique;primaryKey"`
-	Owner  User   `gorm:"not null;foreignKey:Name"`
 	Parent string
 	Name   string    `gorm:"not null;"`
 	Type   string    `gorm:"not null;"`
