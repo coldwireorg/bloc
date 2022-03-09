@@ -4,6 +4,8 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
+	"github.com/minio/minio-go/v7"
+	"github.com/minio/minio-go/v7/pkg/credentials"
 	"github.com/rs/zerolog/log"
 	"golang.org/x/oauth2"
 )
@@ -37,13 +39,26 @@ func Init() {
 			},
 		},
 		Storage: StorageConfig{
-			Path:  os.Getenv("BLOC_STORAGE_PATH"),
-			Quota: os.Getenv("BLOC_STORAGE_QUOTA"),
+			Driver: os.Getenv("BLOC_STORAGE_DRIVER"),
+			Quota:  os.Getenv("BLOC_STORAGE_QUOTA"),
+			Polar: StoragePolarConfig{
+				Url:    os.Getenv("BLOC_STORAGE_POLAR_URI"),
+				Secret: os.Getenv("BLOC_STORAGE_POLAR_SECRET"),
+			},
+			FileSystem: StorageFileSystemConfig{
+				Path: os.Getenv("BLOC_STORAGE_FS_PATH"),
+			},
+			S3: StorageS3Config{
+				Address: os.Getenv("BLOC_STORAGE_S3_ADDRESS"),
+				Bucket:  os.Getenv("BLOC_STORAGE_S3_BUCKET"),
+				Options: minio.Options{
+					Creds:  credentials.NewStaticV4(os.Getenv("BLOC_STORAGE_S3_ID"), os.Getenv("BLOC_STORAGE_S3_SECRET"), os.Getenv("BLOC_STORAGE_S3_TOKEN")),
+					Region: os.Getenv("BLOC_STORAGE_S3_REGION"),
+					Secure: true,
+				},
+			},
 		},
-		Polar: PolarConfig{
-			Uri:    os.Getenv("BLOC_POLAR_URI"),
-			Secret: os.Getenv("BLOC_POLAR_SECRET"),
-		},
+
 		Oauth: OauthConfig{
 			Server: os.Getenv("BLOC_OAUTH_SERVER"),
 			Config: oauth2.Config{
@@ -58,7 +73,6 @@ type Config struct {
 	Server   ServerConfig
 	Database DatabaseConfig
 	Storage  StorageConfig
-	Polar    PolarConfig
 	Oauth    OauthConfig
 }
 
@@ -85,14 +99,28 @@ type DatabaseSqliteConfig struct {
 	Path string // path to the database file
 }
 
+/* STORAGE DRIVERS */
 type StorageConfig struct {
-	Path  string // Path where to store encrypted files
-	Quota string // Total size of files that users cans upload
+	Driver     string
+	Quota      string // Total size of files that users cans upload
+	FileSystem StorageFileSystemConfig
+	Polar      StoragePolarConfig
+	S3         StorageS3Config
 }
 
-type PolarConfig struct {
-	Uri    string // unix socket/address of the polar node
+type StoragePolarConfig struct {
+	Url    string // unix socket/address of the polar node
 	Secret string // Opetional secret to access a private polar node
+}
+
+type StorageFileSystemConfig struct {
+	Path string // Path where to store encrypted files
+}
+
+type StorageS3Config struct {
+	Bucket  string
+	Address string
+	minio.Options
 }
 
 type OauthConfig struct {

@@ -4,6 +4,7 @@ import (
 	"bloc/config"
 	"bloc/database"
 	"bloc/routes"
+	"bloc/storage"
 	"bloc/utils"
 	"os"
 
@@ -28,6 +29,9 @@ func init() {
 	if config.Conf.Oauth.Server != "" {
 		go cwauth.InitOauth2(config.Conf.Oauth.Config, config.Conf.Oauth.Server)
 	}
+
+	// Init storage backend
+	storage.Init()
 }
 
 func main() {
