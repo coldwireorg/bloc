@@ -1,7 +1,7 @@
 package storage
 
 import (
-	"bloc/config"
+	"bloc/utils/config"
 	"mime/multipart"
 )
 

@@ -1,8 +1,8 @@
 package middlewares
 
 import (
-	"bloc/config"
 	"bloc/utils"
+	"bloc/utils/config"
 
 	"codeberg.org/coldwire/cwauth"
 	"github.com/gofiber/fiber/v2"

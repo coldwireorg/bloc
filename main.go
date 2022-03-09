@@ -1,11 +1,11 @@
 package main
 
 import (
-	"bloc/config"
 	"bloc/database"
 	"bloc/routes"
 	"bloc/storage"
 	"bloc/utils"
+	"bloc/utils/config"
 	"bloc/utils/env"
 	"flag"
 	"os"

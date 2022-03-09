@@ -1,7 +1,7 @@
 package tokens
 
 import (
-	"bloc/config"
+	"bloc/utils/config"
 	"time"
 
 	"codeberg.org/coldwire/cwauth"

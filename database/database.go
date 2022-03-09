@@ -1,7 +1,7 @@
 package database
 
 import (
-	"bloc/config"
+	"bloc/utils/config"
 	"strings"
 	"time"
 

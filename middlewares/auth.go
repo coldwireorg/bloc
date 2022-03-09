@@ -1,8 +1,8 @@
 package middlewares
 
 import (
-	"bloc/config"
 	"bloc/utils"
+	"bloc/utils/config"
 	"bloc/utils/tokens"
 
 	"github.com/gofiber/fiber/v2"
