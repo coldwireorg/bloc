@@ -6,6 +6,8 @@ import (
 	"bloc/routes"
 	"bloc/storage"
 	"bloc/utils"
+	"bloc/utils/env"
+	"flag"
 	"os"
 
 	"codeberg.org/coldwire/cwauth"
@@ -13,21 +15,29 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+	"golang.org/x/oauth2"
 )
 
 func init() {
 	// Configure logs
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 
+	fileConf := flag.String("config", "", "Path to the config file")
+	flag.Parse()
+
 	// Init configuration
-	config.Init()
+	config.Init(env.Get("CONFIG_FILE", *fileConf))
 
 	// Connect to database
 	go database.Connect()
 
 	// Init oauth client
 	if config.Conf.Oauth.Server != "" {
-		go cwauth.InitOauth2(config.Conf.Oauth.Config, config.Conf.Oauth.Server)
+		go cwauth.InitOauth2(oauth2.Config{
+			ClientID:     config.Conf.Oauth.Id,
+			ClientSecret: config.Conf.Oauth.Secret,
+			RedirectURL:  config.Conf.Oauth.Callback,
+		}, config.Conf.Oauth.Server)
 	}
 
 	// Init storage backend

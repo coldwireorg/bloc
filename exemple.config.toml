@@ -1,0 +1,42 @@
+[server]
+address = "0.0.0.0"
+port = "3002"
+
+[database]
+driver = "postgres"
+
+  [database.postgres]
+  address = "127.0.0.1"
+  port = "5432"
+  user = "postgres"
+  password = "4llc0ps4re64st4rds"
+  name = "bloc"
+
+  [database.sqlite]
+  path = "/tmp/bloc.sqlite"
+
+[storage]
+driver = "fs"
+quota = "4G"
+
+  [storage.fileSystem]
+  path = "/tmp/bloc"
+
+  [storage.s3]
+  address = ""
+  bucket = "bloc"
+  id = ""
+  secret = ""
+  token = ""
+  region = ""
+
+  [storage.polar]
+  url = "unix:///var/run/polar.sock"
+  secret = "acab"
+
+[oauth]
+server = "https://auth.coldwire.org/"
+id = "bloc"
+secret = ""
+callback = "https://bloc.coldwire.org/api/user/auth/oauth2/callback"
+  

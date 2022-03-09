@@ -1,20 +1,38 @@
 package config
 
 import (
+	"bloc/utils/env"
 	"os"
 
+	"github.com/BurntSushi/toml"
 	"github.com/joho/godotenv"
-	"github.com/minio/minio-go/v7"
-	"github.com/minio/minio-go/v7/pkg/credentials"
 	"github.com/rs/zerolog/log"
-	"golang.org/x/oauth2"
 )
 
 // Export config to the whole project
 var Conf *Config
 
 // Init config to ensure that env variable are loaded
-func Init() {
+func Init(file string) {
+	// if config file is specified we use it
+	if file != "" {
+		log.Info().Msg("Loading config file: " + file)
+		f, err := os.ReadFile(file)
+		if err != nil {
+			log.Fatal().Msg(err.Error())
+		}
+
+		var c Config
+		_, err = toml.Decode(string(f), &c)
+		if err != nil {
+			log.Fatal().Msg(err.Error())
+		}
+
+		Conf = &c
+
+		return
+	}
+
 	err := godotenv.Load()
 	if err != nil {
 		log.Err(err).Msg(err.Error())
@@ -22,49 +40,49 @@ func Init() {
 
 	Conf = &Config{
 		Server: ServerConfig{
-			Address: os.Getenv("BLOC_SERVER_ADDRESS"),
-			Port:    os.Getenv("BLOC_SERVER_PORT"),
+			Address: env.Get("BLOC_SERVER_ADDRESS", "0.0.0.0"),
+			Port:    env.Get("BLOC_SERVER_PORT", "3000"),
 		},
+
 		Database: DatabaseConfig{
-			Driver: os.Getenv("BLOC_DATABASE_DRIVER"),
+			Driver: env.Get("BLOC_DATABASE_DRIVER", "sqlite"),
 			Postgres: DatabasePostgresConfig{
-				Address:  os.Getenv("BLOC_DATABASE_ADDRESS"),
-				Port:     os.Getenv("BLOC_DATABASE_PORT"),
-				User:     os.Getenv("BLOC_DATABASE_USER"),
-				Password: os.Getenv("BLOC_DATABASE_PASSWORD"),
-				Name:     os.Getenv("BLOC_DATABASE_NAME"),
+				Address:  env.Get("BLOC_DATABASE_ADDRESS", "127.0.0.1"),
+				Port:     env.Get("BLOC_DATABASE_PORT", "5432"),
+				User:     env.Get("BLOC_DATABASE_USER", "postgres"),
+				Password: env.Get("BLOC_DATABASE_PASSWORD", "123456789"),
+				Name:     env.Get("BLOC_DATABASE_NAME", "bloc"),
 			},
 			Sqlite: DatabaseSqliteConfig{
-				Path: os.Getenv("BLOC_DATABASE_PATH"),
+				Path: env.Get("BLOC_DATABASE_PATH", "/tmp/bloc.sqlite"),
 			},
 		},
+
 		Storage: StorageConfig{
-			Driver: os.Getenv("BLOC_STORAGE_DRIVER"),
-			Quota:  os.Getenv("BLOC_STORAGE_QUOTA"),
-			Polar: StoragePolarConfig{
-				Url:    os.Getenv("BLOC_STORAGE_POLAR_URI"),
-				Secret: os.Getenv("BLOC_STORAGE_POLAR_SECRET"),
-			},
+			Driver: env.Get("BLOC_STORAGE_DRIVER", "fs"),
+			Quota:  env.Get("BLOC_STORAGE_QUOTA", "4G"),
 			FileSystem: StorageFileSystemConfig{
-				Path: os.Getenv("BLOC_STORAGE_FS_PATH"),
+				Path: env.Get("BLOC_STORAGE_FS_PATH", "/tmp/bloc/"),
 			},
 			S3: StorageS3Config{
-				Address: os.Getenv("BLOC_STORAGE_S3_ADDRESS"),
-				Bucket:  os.Getenv("BLOC_STORAGE_S3_BUCKET"),
-				Options: minio.Options{
-					Creds:  credentials.NewStaticV4(os.Getenv("BLOC_STORAGE_S3_ID"), os.Getenv("BLOC_STORAGE_S3_SECRET"), os.Getenv("BLOC_STORAGE_S3_TOKEN")),
-					Region: os.Getenv("BLOC_STORAGE_S3_REGION"),
-					Secure: true,
-				},
+				Address: env.Get("BLOC_STORAGE_S3_ADDRESS", ""),
+				Bucket:  env.Get("BLOC_STORAGE_S3_BUCKET", "bloc"),
+				Id:      env.Get("BLOC_STORAGE_S3_ID", ""),
+				Secret:  env.Get("BLOC_STORAGE_S3_SECRET", ""),
+				Token:   env.Get("BLOC_STORAGE_S3_TOKEN", ""),
+				Region:  env.Get("BLOC_STORAGE_S3_REGION", ""),
+			},
+			Polar: StoragePolarConfig{
+				Url:    env.Get("BLOC_STORAGE_POLAR_URI", "unix:///var/run/polar.sock"),
+				Secret: env.Get("BLOC_STORAGE_POLAR_SECRET", "acab"),
 			},
 		},
 
 		Oauth: OauthConfig{
-			Server: os.Getenv("BLOC_OAUTH_SERVER"),
-			Config: oauth2.Config{
-				ClientID:    os.Getenv("BLOC_OAUTH_CLIENT"),
-				RedirectURL: os.Getenv("BLOC_OAUTH_CALLBACK"),
-			},
+			Server:   env.Get("BLOC_OAUTH_SERVER", ""),
+			Id:       env.Get("BLOC_OAUTH_CLIENT", "bloc"),
+			Secret:   env.Get("BLOC_OAUTH_SECRET", ""),
+			Callback: env.Get("BLOC_OAUTH_CALLBACK", "https://bloc.coldwire.org/api/user/auth/oauth2/callback"),
 		},
 	}
 }
@@ -120,10 +138,15 @@ type StorageFileSystemConfig struct {
 type StorageS3Config struct {
 	Bucket  string
 	Address string
-	minio.Options
+	Id      string
+	Secret  string
+	Token   string
+	Region  string
 }
 
 type OauthConfig struct {
-	Config oauth2.Config
-	Server string
+	Server   string
+	Id       string
+	Secret   string
+	Callback string
 }

@@ -6,13 +6,14 @@ import (
 	"mime/multipart"
 
 	"github.com/minio/minio-go/v7"
+	"github.com/minio/minio-go/v7/pkg/credentials"
 	"github.com/rs/zerolog/log"
 )
 
 /*
 
 S3 backend
-  Write file to the polar decentralized network
+  Write file to any S3 cluster
 
 */
 
@@ -21,7 +22,18 @@ type S3 struct {
 }
 
 func NewS3() S3 {
-	client, err := minio.New(config.Conf.Storage.S3.Address, &config.Conf.Storage.S3.Options)
+	client, err := minio.New(config.Conf.Storage.S3.Address, &minio.Options{
+		Creds: credentials.New(&credentials.Static{
+			Value: credentials.Value{
+				AccessKeyID:     config.Conf.Storage.S3.Id,
+				SecretAccessKey: config.Conf.Storage.S3.Secret,
+				SessionToken:    config.Conf.Storage.S3.Token,
+				SignerType:      credentials.SignatureV4,
+			},
+		}),
+		Region: config.Conf.Storage.S3.Region,
+	})
+
 	if err != nil {
 		log.Err(err).Msg(err.Error())
 	}
