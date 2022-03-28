@@ -19,20 +19,17 @@ func Register(c *fiber.Ctx) error {
 		PublicKey  string `json:"public_key"`
 	}{}
 
+	var root = models.Folder{
+		Id:    shortuuid.New(),
+		Name:  "root",
+		Owner: request.Username,
+	}
+
 	var usr = models.User{
-		Name:       request.Username,
+		Username:   request.Username,
 		PrivateKey: request.PrivateKey,
 		PublicKey:  request.PublicKey,
-		Home: models.FolderAccess{
-			Id:   shortuuid.New(),
-			Path: "/",
-			Folder: models.Folder{
-				Id:      shortuuid.New(),
-				Name:    "home",
-				Folders: []models.Folder{},
-				Files:   []models.File{},
-			},
-		},
+		Root:       root.Id,
 	}
 
 	err := c.BodyParser(&request)

@@ -53,9 +53,6 @@ func Init(file string) {
 				Password: env.Get("BLOC_DATABASE_PASSWORD", "123456789"),
 				Name:     env.Get("BLOC_DATABASE_NAME", "bloc"),
 			},
-			Sqlite: DatabaseSqliteConfig{
-				Path: env.Get("BLOC_DATABASE_PATH", "/tmp/bloc.sqlite"),
-			},
 		},
 
 		Storage: StorageConfig{
@@ -102,7 +99,6 @@ type ServerConfig struct {
 type DatabaseConfig struct {
 	Driver   string                 // postgres or sqlite
 	Postgres DatabasePostgresConfig // Postgres config
-	Sqlite   DatabaseSqliteConfig   // Sqlite config
 }
 
 type DatabasePostgresConfig struct {
@@ -111,10 +107,6 @@ type DatabasePostgresConfig struct {
 	User     string // USer of the database
 	Password string // Password of the database
 	Name     string // Name of the database
-}
-
-type DatabaseSqliteConfig struct {
-	Path string // path to the database file
 }
 
 /* STORAGE DRIVERS */

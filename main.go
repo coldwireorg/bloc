@@ -4,7 +4,6 @@ import (
 	"bloc/database"
 	"bloc/routes"
 	"bloc/storage"
-	"bloc/utils"
 	"bloc/utils/config"
 	"bloc/utils/env"
 	"flag"
@@ -29,11 +28,11 @@ func init() {
 	config.Init(env.Get("CONFIG_FILE", *fileConf))
 
 	// Connect to database
-	go database.Connect()
+	database.Connect()
 
 	// Init oauth client
 	if config.Conf.Oauth.Server != "" {
-		go cwauth.InitOauth2(oauth2.Config{
+		cwauth.InitOauth2(oauth2.Config{
 			ClientID:     config.Conf.Oauth.Id,
 			ClientSecret: config.Conf.Oauth.Secret,
 			RedirectURL:  config.Conf.Oauth.Callback,
@@ -45,8 +44,6 @@ func init() {
 }
 
 func main() {
-	isReady := utils.Migrate()
-
 	// Create fiber instance
 	app := fiber.New(fiber.Config{
 		BodyLimit: (1024 * 1024 * 1024) * 8, // Limit file upload size (8Gb)
@@ -58,8 +55,5 @@ func main() {
 	// Setup API routes
 	routes.Api(app)
 
-	// Wait for database to be clean/ready
-	if isReady {
-		log.Info().Err(app.Listen(config.Conf.Server.Address + ":" + config.Conf.Server.Port))
-	}
+	log.Info().Err(app.Listen(config.Conf.Server.Address + ":" + config.Conf.Server.Port))
 }

@@ -12,9 +12,6 @@ driver = "postgres"
   password = "4llc0ps4re64st4rds"
   name = "bloc"
 
-  [database.sqlite]
-  path = "/tmp/bloc.sqlite"
-
 [storage]
 driver = "fs"
 quota = "4G"

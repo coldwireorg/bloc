@@ -2,47 +2,31 @@ package database
 
 import (
 	"bloc/utils/config"
+	"context"
+	_ "embed"
 	"strings"
 	"time"
 
+	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/rs/zerolog/log"
-	"gorm.io/driver/postgres"
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 )
 
+//go:embed schema.sql
+var tables string
+
 // Expose database to the whole project
-var DB *gorm.DB
+var DB *pgxpool.Pool
 var Ready bool = false
 
 // Connect to the database
 func Connect() error {
 	var err error
-
-	newLogger := logger.New(
-		&log.Logger,
-		logger.Config{
-			LogLevel: logger.Silent,
-		},
-	)
-
-	var gconf *gorm.Config = &gorm.Config{
-		Logger: newLogger,
-	}
-
 	// Run until the database is connected
 	for {
 
 		log.Info().Msg("Using driver: " + config.Conf.Database.Driver)
 
 		switch config.Conf.Database.Driver {
-		case "sqlite":
-			if config.Conf.Database.Sqlite.Path != "" {
-				DB, err = gorm.Open(sqlite.Open(config.Conf.Database.Sqlite.Path), gconf)
-			} else {
-				log.Fatal().Msg("Please set a path to the database file or use Postgres if you want a remote database")
-			}
 		case "postgres":
 			DSN := []string{
 				"postgresql://",
@@ -53,7 +37,7 @@ func Connect() error {
 				"&password=" + config.Conf.Database.Postgres.Password,
 			}
 
-			DB, err = gorm.Open(postgres.Open(strings.Join(DSN[:], "")), gconf)
+			DB, err = pgxpool.Connect(context.Background(), strings.Join(DSN[:], ""))
 		default:
 			log.Fatal().Msg("Database driver not found!")
 		}
@@ -67,6 +51,12 @@ func Connect() error {
 			Ready = true
 			break
 		}
+	}
+
+	// Create tables
+	_, err = DB.Exec(context.Background(), tables)
+	if err != nil {
+		log.Err(err).Msg(err.Error())
 	}
 
 	return nil
