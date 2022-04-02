@@ -1,3 +1,5 @@
+package models
+
 type Share struct {
 	Id         string
 	Name       string
