@@ -1,4 +1,3 @@
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TYPE authmode AS ENUM ('LOCAL', 'OAUTH2');
 
 CREATE TABLE IF NOT EXISTS users (
@@ -7,11 +6,7 @@ CREATE TABLE IF NOT EXISTS users (
   auth_mode     authmode NOT NULL DEFAULT 'LOCAL',
   f_root_folder VARCHAR(256) NOT NULL,
   private_key   VARCHAR(256) NOT NULL,
-  public_key    VARCHAR(256) NOT NULL,
-
-  CONSTRAINT c_root_folder
-    FOREIGN KEY (f_root_folder)
-      REFERENCES folders(id)
+  public_key    VARCHAR(256) NOT NULL
 );
 
 
@@ -19,7 +14,7 @@ CREATE TABLE IF NOT EXISTS folders (
   id        VARCHAR(256) PRIMARY KEY NOT NULL UNIQUE,
   name      VARCHAR(128) NOT NULL,
   f_owner   VARCHAR(24) NOT NULL,
-  f_parent  VARCHAR(256) NOT NULL,
+  f_parent  VARCHAR(256),
 
   CONSTRAINT c_parent
     FOREIGN KEY (f_parent)
@@ -30,6 +25,11 @@ CREATE TABLE IF NOT EXISTS folders (
       REFERENCES users(username)
 );
 
+ALTER TABLE users ADD
+  CONSTRAINT c_root_folder
+    FOREIGN KEY (f_root_folder)
+      REFERENCES folders(id)
+        ON DELETE CASCADE;
 
 CREATE TABLE IF NOT EXISTS files (
   id          VARCHAR(256) PRIMARY KEY NOT NULL UNIQUE,
@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS shares (
   key         VARCHAR(256) NOT NULL,
   is_favorite BOOLEAN NOT NULL DEFAULT FALSE,
   is_file     BOOLEAN NOT NULL,  
-  f_file      UUID DEFAULT NULL,
+  f_file      VARCHAR(256) DEFAULT NULL,
   f_folder    VARCHAR(256) DEFAULT NULL,
   f_owner     VARCHAR(24) NOT NULL,
 

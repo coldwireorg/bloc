@@ -12,8 +12,22 @@ type File struct {
 	Owner      string
 }
 
-func (f File) Create() error
-func (f File) Delete() error
-func (f File) Update() error
-func (f File) Find() error
-func (f File) Move() error
+func (f File) Create() error {
+	return nil
+}
+
+func (f File) Delete() error {
+	return nil
+}
+
+func (f File) Update() error {
+	return nil
+}
+
+func (f File) Find() error {
+	return nil
+}
+
+func (f File) Move() error {
+	return nil
+}

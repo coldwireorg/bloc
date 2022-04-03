@@ -10,6 +10,14 @@ type Share struct {
 	Owner      string
 }
 
-func (u Share) Add() error
-func (u Share) Revoke() error
-func (u Share) Find() error
+func (u Share) Add() error {
+	return nil
+}
+
+func (u Share) Revoke() error {
+	return nil
+}
+
+func (u Share) Find() error {
+	return nil
+}

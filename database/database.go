@@ -4,6 +4,7 @@ import (
 	"bloc/utils/config"
 	"context"
 	_ "embed"
+	"fmt"
 	"strings"
 	"time"
 
@@ -21,11 +22,11 @@ var Ready bool = false
 // Connect to the database
 func Connect() error {
 	var err error
+
+	log.Info().Msg("Using driver: " + config.Conf.Database.Driver)
+
 	// Run until the database is connected
 	for {
-
-		log.Info().Msg("Using driver: " + config.Conf.Database.Driver)
-
 		switch config.Conf.Database.Driver {
 		case "postgres":
 			DSN := []string{
@@ -43,6 +44,9 @@ func Connect() error {
 		}
 
 		if err != nil {
+
+			fmt.Print(err)
+
 			Ready = false
 			log.Err(err).Msg(err.Error())
 			time.Sleep(5 * time.Second)

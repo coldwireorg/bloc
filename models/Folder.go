@@ -7,7 +7,18 @@ type Folder struct {
 	Parent string
 }
 
-func (f Folder) Create() error
-func (f Folder) Delete() error
-func (f Folder) Find() error
-func (f Folder) Move() error
+func (f Folder) Create() error {
+	return nil
+}
+
+func (f Folder) Delete() error {
+	return nil
+}
+
+func (f Folder) Find() error {
+	return nil
+}
+
+func (f Folder) Move() error {
+	return nil
+}

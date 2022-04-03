@@ -1,6 +1,6 @@
 module bloc
 
-go 1.17
+go 1.16
 
 require (
 	codeberg.org/coldwire/cwauth v0.0.0-20220308210551-1fc53c8ab924

@@ -57,4 +57,6 @@ func (u User) Find() (User, error) {
 	return user, nil
 }
 
-func (u User) Exist() bool
+func (u User) Exist() bool {
+	return false
+}
