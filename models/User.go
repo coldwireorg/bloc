@@ -14,7 +14,7 @@ type User struct {
 	AuthMode   string `db:"auth_mode"     json:"authMode"`
 	PrivateKey string `db:"private_key"   json:"privateKey"`
 	PublicKey  string `db:"public_key"    json:"publicKey"`
-	Root       string `db:"f_root_folder" json:"root"`
+	Root       string `db:"root" json:"root"`
 }
 
 func (u User) Create() error {
@@ -54,7 +54,7 @@ func (u User) Find() (User, error) {
 		return user, err
 	}
 
-	return user, nil
+	return user, err
 }
 
 func (u User) Exist() bool {

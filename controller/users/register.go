@@ -2,7 +2,10 @@ package users
 
 import (
 	"bloc/models"
+	"bloc/utils"
 	"bloc/utils/errs"
+	"bloc/utils/tokens"
+	"time"
 
 	"github.com/alexedwards/argon2id"
 	"github.com/gofiber/fiber/v2"
@@ -73,5 +76,16 @@ func Register(c *fiber.Ctx) error {
 	usr.SetRoot(root.Id)        // Set root folder of the user
 	root.SetOwner(usr.Username) // Set the owner of the root folder
 
-	return c.JSON(errs.Success)
+	token := tokens.Generate(tokens.Token{
+		Username:   request.Username,
+		PrivateKey: request.PrivateKey,
+		PublicKey:  request.PublicKey,
+	}, 12*time.Hour)
+
+	utils.SetCookie(c, "token", token, time.Now().Add(time.Hour*6))
+
+	return c.JSON(utils.Reponse{
+		Success: true,
+		Data:    fiber.Map{},
+	})
 }
