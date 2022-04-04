@@ -5,6 +5,10 @@ import (
 )
 
 var (
+	Success = utils.Reponse{
+		Success: true,
+	}
+
 	Internal = utils.Reponse{
 		Success: false,
 		Error:   "Internal server error",

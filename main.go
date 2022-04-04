@@ -2,7 +2,6 @@ package main
 
 import (
 	"bloc/database"
-	"bloc/models"
 	"bloc/routes"
 	"bloc/storage"
 	"bloc/utils/config"
@@ -13,7 +12,6 @@ import (
 	"codeberg.org/coldwire/cwauth"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
-	"github.com/lithammer/shortuuid/v4"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"golang.org/x/oauth2"
@@ -56,26 +54,6 @@ func main() {
 
 	// Setup API routes
 	routes.Api(app)
-
-	f := models.Folder{
-		Id:   shortuuid.New(),
-		Name: "root",
-	}
-
-	f.Create()
-
-	u := models.User{
-		Username:   "acab",
-		Password:   "password",
-		AuthMode:   "LOCAL",
-		PrivateKey: "acaba",
-		PublicKey:  "ababa",
-	}
-
-	u.Create()
-
-	u.SetRoot(f.Id)
-	f.SetOwner(u.Username)
 
 	log.Info().Err(app.Listen(config.Conf.Server.Address + ":" + config.Conf.Server.Port))
 }

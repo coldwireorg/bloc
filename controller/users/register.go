@@ -17,25 +17,27 @@ func Register(c *fiber.Ctx) error {
 		Password   string `json:"password"`
 		PrivateKey string `json:"private_key"`
 		PublicKey  string `json:"public_key"`
+		AuthMode   string `json:"auth_mode"`
 	}{}
 
+	err := c.BodyParser(&request)
+	if err != nil {
+		log.Err(err).Msg(err.Error())
+		return c.JSON(errs.BadRequest)
+	}
+
+	log.Print(request)
+
 	var root = models.Folder{
-		Id:    shortuuid.New(),
-		Name:  "root",
-		Owner: request.Username,
+		Id:   shortuuid.New(),
+		Name: "root",
 	}
 
 	var usr = models.User{
 		Username:   request.Username,
 		PrivateKey: request.PrivateKey,
 		PublicKey:  request.PublicKey,
-		Root:       root.Id,
-	}
-
-	err := c.BodyParser(&request)
-	if err != nil {
-		log.Err(err).Msg(err.Error())
-		return c.JSON(errs.BadRequest)
+		AuthMode:   request.AuthMode,
 	}
 
 	if request.Username == "" {
@@ -59,11 +61,17 @@ func Register(c *fiber.Ctx) error {
 
 	usr.Password = hash
 
+	// Create root folder
+	root.Create()
+
 	err = usr.Create()
 	if err != nil {
 		log.Err(err).Msg(err.Error())
 		return c.JSON(errs.Internal)
 	}
 
-	return c.SendStatus(404)
+	usr.SetRoot(root.Id)        // Set root folder of the user
+	root.SetOwner(usr.Username) // Set the owner of the root folder
+
+	return c.JSON(errs.Success)
 }
