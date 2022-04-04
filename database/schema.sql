@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS users (
   username      VARCHAR(24) PRIMARY KEY NOT NULL UNIQUE,
   password      VARCHAR(100) DEFAULT NULL,
   auth_mode     authmode NOT NULL DEFAULT 'LOCAL',
-  f_root_folder VARCHAR(256) NOT NULL,
+  f_root_folder VARCHAR(256) DEFAULT NULL,
   private_key   VARCHAR(256) NOT NULL,
   public_key    VARCHAR(256) NOT NULL
 );
@@ -13,23 +13,20 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS folders (
   id        VARCHAR(256) PRIMARY KEY NOT NULL UNIQUE,
   name      VARCHAR(128) NOT NULL,
-  f_owner   VARCHAR(24) NOT NULL,
-  f_parent  VARCHAR(256),
+  f_owner   VARCHAR(24) DEFAULT NULL,
+  f_parent  VARCHAR(256) DEFAULT NULL,
 
-  CONSTRAINT c_parent
-    FOREIGN KEY (f_parent)
-      REFERENCES folders(id),
+  FOREIGN KEY (f_parent)
+    REFERENCES folders(id),
 
-  CONSTRAINT c_owner
-    FOREIGN KEY (f_owner)
-      REFERENCES users(username)
+  FOREIGN KEY (f_owner)
+    REFERENCES users(username)
 );
 
 ALTER TABLE users ADD
-  CONSTRAINT c_root_folder
-    FOREIGN KEY (f_root_folder)
-      REFERENCES folders(id)
-        ON DELETE CASCADE;
+  FOREIGN KEY (f_root_folder)
+    REFERENCES folders(id)
+      ON DELETE CASCADE;
 
 CREATE TABLE IF NOT EXISTS files (
   id          VARCHAR(256) PRIMARY KEY NOT NULL UNIQUE,

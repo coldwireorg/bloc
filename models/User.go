@@ -9,16 +9,16 @@ import (
 )
 
 type User struct {
-	Username   string
-	Password   string
-	AuthMode   string
-	PrivateKey string
-	PublicKey  string
-	Root       string
+	Username   string `db:"username"      json:"username"`
+	Password   string `db:"password"      json:"password"`
+	AuthMode   string `db:"auth_mode"     json:"authMode"`
+	PrivateKey string `db:"private_key"   json:"privateKey"`
+	PublicKey  string `db:"public_key"    json:"publicKey"`
+	Root       string `db:"f_root_folder" json:"root"`
 }
 
 func (u User) Create() error {
-	_, err := database.DB.Exec(context.Background(), `INSERT INTO users(username, password, auth_mode, f_root_folder, public_key, private_key) VALUES($1, $2, $3, $4, $5, $6)`, u.Username, u.Password, u.AuthMode, u.Root, u.PublicKey, u.PrivateKey)
+	_, err := database.DB.Exec(context.Background(), `INSERT INTO users(username, password, auth_mode, public_key, private_key) VALUES($1, $2, $3, $4, $5)`, u.Username, u.Password, u.AuthMode, u.PublicKey, u.PrivateKey)
 	if err != nil {
 		log.Println(err.Error())
 		return err
@@ -59,4 +59,14 @@ func (u User) Find() (User, error) {
 
 func (u User) Exist() bool {
 	return false
+}
+
+func (u User) SetRoot(id string) error {
+	_, err := database.DB.Exec(context.Background(), `UPDATE users SET f_root_folder = $1 WHERE username = $2`, id, u.Username)
+	if err != nil {
+		log.Println(err.Error())
+		return err
+	}
+
+	return err
 }
