@@ -63,20 +63,19 @@ func main() {
 	}
 
 	f.Create()
-	/*
 
-		u := models.User{
-			Username:   "acab",
-			Password:   "password",
-			AuthMode:   "LOCAL",
-			PrivateKey: "acaba",
-			PublicKey:  "ababa",
-		}
+	u := models.User{
+		Username:   "acab",
+		Password:   "password",
+		AuthMode:   "LOCAL",
+		PrivateKey: "acaba",
+		PublicKey:  "ababa",
+	}
 
-		u.Create()*/
+	u.Create()
 
-	//u.SetRoot(f.Id)
-	//f.SetOwner(u.Username)
+	u.SetRoot(f.Id)
+	f.SetOwner(u.Username)
 
 	log.Info().Err(app.Listen(config.Conf.Server.Address + ":" + config.Conf.Server.Port))
 }

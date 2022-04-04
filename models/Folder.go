@@ -16,7 +16,7 @@ type Folder struct {
 }
 
 func (f Folder) Create() error {
-	_, err := database.DB.Exec(context.Background(), `INSERT INTO folders(id, name, f_parent) VALUES($1, $2, $3)`, f.Id, f.Name, f.Parent)
+	_, err := database.DB.Exec(context.Background(), `INSERT INTO folders(id, name) VALUES($1, $2)`, f.Id, f.Name)
 	if err != nil {
 		log.Println(err.Error())
 		return err
@@ -53,8 +53,46 @@ func (f Folder) Find() (Folder, error) {
 	return folder, nil
 }
 
-func (f Folder) Move(parent string) error {
-	_, err := database.DB.Exec(context.Background(), `UPDATE folders SET f_parent = $1 WHERE id = $2`, parent, f.Id)
+// Get files and folders that are childrens of this directory
+func (f Folder) GetChildrens() ([]Folder, []File, error) {
+	var (
+		folders []Folder
+		files   []File
+		err     error
+	)
+
+	err = pgxscan.Get(context.Background(), database.DB, &folders, `SELECT
+	id,
+	name,
+	f_owner AS owner,
+		FROM folders
+			WHERE f_parent = $1`, f.Id)
+
+	if err != nil {
+		log.Println(err.Error())
+		return folders, files, err
+	}
+
+	err = pgxscan.Get(context.Background(), database.DB, &files, `SELECT
+	id,
+	name,
+	size,
+	is_favorite,
+	key,
+	f_owner AS owner,
+		FROM files
+			WHERE f_parent = $1`, f.Id)
+
+	if err != nil {
+		log.Println(err.Error())
+		return folders, files, err
+	}
+
+	return folders, files, err
+}
+
+func (f Folder) SetOwner(username string) error {
+	_, err := database.DB.Exec(context.Background(), `UPDATE folders SET f_owner = $1 WHERE id = $2`, username, f.Id)
 	if err != nil {
 		log.Println(err.Error())
 		return err
@@ -63,8 +101,8 @@ func (f Folder) Move(parent string) error {
 	return err
 }
 
-func (f Folder) SetOwner(username string) error {
-	_, err := database.DB.Exec(context.Background(), `UPDATE folders SET f_owner = $1 WHERE id = $2`, username, f.Id)
+func (f Folder) SetParent(parent string) error {
+	_, err := database.DB.Exec(context.Background(), `UPDATE folders SET f_parent = $1 WHERE id = $2`, parent, f.Id)
 	if err != nil {
 		log.Println(err.Error())
 		return err
