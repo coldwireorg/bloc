@@ -23,8 +23,6 @@ func Download(c *fiber.Ctx) error {
 		return c.Status(500).JSON(errs.BadRequest)
 	}
 
-	log.Debug().Msg(file.Id)
-
 	file, err = file.Find()
 	if err != nil {
 		log.Err(err).Msg(err.Error())

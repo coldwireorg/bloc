@@ -3,6 +3,7 @@ package routes
 import (
 	"bloc/controller/files"
 	"bloc/controller/files/shares"
+	"bloc/controller/folders"
 	"bloc/controller/users"
 	"bloc/middlewares"
 
@@ -32,6 +33,12 @@ func Api(app *fiber.App) {
 	file.Get("/list/:folder", files.List)     // List files in a folder
 	file.Get("/download/:id", files.Download) // Download file
 	file.Put("/favorite", files.Favorite)     // set favorite
+
+	// folders > /api/folder
+	folder := api.Group("/folder", middlewares.Auth)
+	folder.Post("/", folders.Create)
+	folder.Put("/", folders.Move)
+	folder.Delete("/", folders.Delete) // Delete file
 
 	// Shares  > /api/file/share
 	share := file.Group("/share", middlewares.Auth)
