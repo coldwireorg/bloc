@@ -6,6 +6,7 @@ import (
 	"bloc/utils/tokens"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/rs/zerolog/log"
 )
 
 func Auth(c *fiber.Ctx) error {
@@ -17,6 +18,7 @@ func Auth(c *fiber.Ctx) error {
 	token := c.Cookies("token")
 	t, err := tokens.Verify(token)
 	if err != nil {
+		log.Err(err).Msg(err.Error())
 		return c.SendStatus(fiber.ErrForbidden.Code)
 	} else {
 		if string(t.Token) != "" {

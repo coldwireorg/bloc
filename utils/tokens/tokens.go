@@ -9,7 +9,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-var key, _ = cwauth.GenerateRandomString(32)
+var key *string
 
 type Token struct {
 	Username   string `json:"username"`
@@ -30,7 +30,7 @@ func Generate(body Token, exp time.Duration) string {
 	}
 
 	// Sign the token with a ed25519 private key
-	t, err := jwt.Sign(jwt.HS256, []byte(key), body, header)
+	t, err := jwt.Sign(jwt.HS256, []byte(*key), body, header)
 	if err != nil {
 		log.Warn().Msg(err.Error())
 	}
@@ -46,7 +46,7 @@ func Verify(token string) (*jwt.VerifiedToken, error) {
 	t := []byte(token) // get token
 
 	// Verify token
-	verifiedToken, err := jwt.Verify(jwt.HS256, key, t)
+	verifiedToken, err := jwt.Verify(jwt.HS256, []byte(*key), t)
 	if err != nil {
 		return nil, err
 	}
@@ -83,4 +83,13 @@ func Parse(token string) (Token, error) {
 
 	// return the token payload without errors
 	return payload, nil
+}
+
+func Init() {
+	k, err := cwauth.GenerateRandomString(32)
+	if err != nil {
+		log.Fatal().Msg(err.Error())
+	}
+
+	key = &k
 }

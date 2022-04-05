@@ -1,7 +1,6 @@
 package storage
 
 import (
-	"bloc/utils/config"
 	"mime/multipart"
 )
 
@@ -26,7 +25,7 @@ func New(driver string) Interface {
 	}
 }
 
-func Init() {
-	i := New(config.Conf.Storage.Driver)
+func Init(d string) {
+	i := New(d)
 	Driver = i
 }

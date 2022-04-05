@@ -17,7 +17,7 @@ driver = "fs"
 quota = "4G"
 
   [storage.fileSystem]
-  path = "/tmp/bloc"
+  path = "./test"
 
   [storage.s3]
   address = ""

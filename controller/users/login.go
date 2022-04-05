@@ -55,5 +55,11 @@ func Login(c *fiber.Ctx) error {
 
 	utils.SetCookie(c, "token", token, time.Now().Add(time.Hour*6))
 
-	return c.JSON(errs.Success)
+	return c.JSON(utils.Reponse{
+		Success: true,
+		Data: fiber.Map{
+			"token": token,
+			"user":  user,
+		},
+	})
 }

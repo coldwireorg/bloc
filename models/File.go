@@ -14,12 +14,12 @@ type File struct {
 	Size       int
 	IsFavorite bool
 	Key        string
-	Parent     int
+	Parent     string
 	Owner      string
 }
 
 func (f File) Create() error {
-	_, err := database.DB.Exec(context.Background(), `INSERT INTO files(id, name, size, is_favorite, key) VALUES($1, $2, $3, $4, $6)`, f.Id, f.Name, f.Size, f.IsFavorite, f.Key)
+	_, err := database.DB.Exec(context.Background(), `INSERT INTO files(id, name, size, is_favorite, key, f_parent, f_owner) VALUES($1, $2, $3, $4, $5, $6, $7)`, f.Id, f.Name, f.Size, f.IsFavorite, f.Key, f.Parent, f.Owner)
 	if err != nil {
 		log.Println(err.Error())
 		return err

@@ -6,6 +6,7 @@ import (
 	"bloc/storage"
 	"bloc/utils/config"
 	"bloc/utils/env"
+	"bloc/utils/tokens"
 	"flag"
 	"os"
 
@@ -40,7 +41,10 @@ func init() {
 	}
 
 	// Init storage backend
-	storage.Init()
+	storage.Init(config.Conf.Storage.Driver)
+
+	// Generate JWT token
+	tokens.Init()
 }
 
 func main() {

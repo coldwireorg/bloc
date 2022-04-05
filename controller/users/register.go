@@ -86,6 +86,9 @@ func Register(c *fiber.Ctx) error {
 
 	return c.JSON(utils.Reponse{
 		Success: true,
-		Data:    fiber.Map{},
+		Data: fiber.Map{
+			"token": token,
+			"user":  usr,
+		},
 	})
 }
