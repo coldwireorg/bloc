@@ -23,6 +23,7 @@ func Upload(c *fiber.Ctx) error {
 	parent := c.FormValue("parent")
 
 	// Get encrypted key to store it, so the user never lost it
+	// TODO: Add a regex to verify that a key is specified
 	key := c.FormValue("key")
 
 	if key == "" || parent == "" {
