@@ -61,31 +61,33 @@ func (f Folder) GetChildrens() ([]Folder, []File, error) {
 		err     error
 	)
 
-	err = pgxscan.Get(context.Background(), database.DB, &folders, `SELECT
+	fldrRows, err := database.DB.Query(context.Background(), `SELECT
 	id,
 	name,
-	f_owner AS owner,
+	f_owner AS owner
 		FROM folders
-			WHERE f_parent = $1`, f.Id)
+			WHERE f_parent = $1 AND f_owner = $2`, f.Id, f.Owner)
 
+	err = pgxscan.ScanAll(&folders, fldrRows)
 	if err != nil {
 		log.Println(err.Error())
-		return folders, files, err
+		return []Folder{}, []File{}, err
 	}
 
-	err = pgxscan.Get(context.Background(), database.DB, &files, `SELECT
+	filesRows, err := database.DB.Query(context.Background(), `SELECT
 	id,
 	name,
 	size,
 	is_favorite,
 	key,
-	f_owner AS owner,
+	f_owner AS owner
 		FROM files
-			WHERE f_parent = $1`, f.Id)
+			WHERE f_parent = $1 AND f_owner = $2`, f.Id, f.Owner)
 
+	err = pgxscan.ScanAll(&files, filesRows)
 	if err != nil {
 		log.Println(err.Error())
-		return folders, files, err
+		return []Folder{}, []File{}, err
 	}
 
 	return folders, files, err

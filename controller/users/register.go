@@ -14,13 +14,11 @@ import (
 )
 
 func Register(c *fiber.Ctx) error {
-	// Structure of the JSON request
 	request := struct {
 		Username   string `json:"username"`
 		Password   string `json:"password"`
 		PrivateKey string `json:"private_key"`
 		PublicKey  string `json:"public_key"`
-		AuthMode   string `json:"auth_mode"`
 	}{}
 
 	err := c.BodyParser(&request)
@@ -28,8 +26,6 @@ func Register(c *fiber.Ctx) error {
 		log.Err(err).Msg(err.Error())
 		return c.JSON(errs.BadRequest)
 	}
-
-	log.Print(request)
 
 	var root = models.Folder{
 		Id:   shortuuid.New(),
@@ -40,7 +36,7 @@ func Register(c *fiber.Ctx) error {
 		Username:   request.Username,
 		PrivateKey: request.PrivateKey,
 		PublicKey:  request.PublicKey,
-		AuthMode:   request.AuthMode,
+		AuthMode:   "LOCAL",
 	}
 
 	if request.Username == "" {
