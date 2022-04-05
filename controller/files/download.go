@@ -37,7 +37,7 @@ func Download(c *fiber.Ctx) error {
 	}
 
 	c.Response().Header.Add("Content-Disposition", "attachment; filename=\""+file.Name+"\"")
-	//c.Response().Header.Add("Content-Type", file.Type)
+	c.Response().Header.Add("Content-Type", file.Type)
 
 	stream, err := storage.Driver.Get(fileId)
 	if err != nil {

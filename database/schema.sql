@@ -32,6 +32,7 @@ CREATE TABLE IF NOT EXISTS files (
   id          VARCHAR(256) PRIMARY KEY NOT NULL UNIQUE,
   name        VARCHAR(128) NOT NULL,
   size        BIGINT NOT NULL,
+  type        VARCHAR(128) NOT NULL,
   is_favorite BOOLEAN NOT NULL DEFAULT FALSE,
   key         VARCHAR(256) NOT NULL,
   f_parent    VARCHAR(256) NOT NULL,
