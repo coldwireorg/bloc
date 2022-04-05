@@ -46,9 +46,9 @@ func (f File) Find() (File, error) {
 	size,
 	is_favorite,
 	key,
-	f_owner AS owner,
+	f_owner AS owner
 		FROM files
-			WHERE f_parent = $1`, f.Id)
+			WHERE id = $1`, f.Id)
 
 	if err != nil {
 		log.Println(err.Error())

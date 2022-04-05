@@ -33,3 +33,7 @@ func (p Polar) Create(id string, file *multipart.FileHeader) error {
 func (p Polar) Delete(id string) error {
 	return nil
 }
+
+func (p Polar) Get(id string) ([]byte, error) {
+	return nil, nil
+}

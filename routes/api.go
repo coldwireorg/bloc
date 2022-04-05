@@ -27,11 +27,11 @@ func Api(app *fiber.App) {
 
 	// files > /api/file
 	file := api.Group("/file", middlewares.Auth)
-	file.Post("/", files.Upload)          // Upload file
-	file.Delete("/", files.Delete)        // Delete file
-	file.Get("/:folder", files.List)      // List files in a folder
-	file.Get("/:id", files.Download)      // Download file
-	file.Put("/favorite", files.Favorite) // set favorite
+	file.Post("/", files.Upload)              // Upload file
+	file.Delete("/", files.Delete)            // Delete file
+	file.Get("/list/:folder", files.List)     // List files in a folder
+	file.Get("/download/:id", files.Download) // Download file
+	file.Put("/favorite", files.Favorite)     // set favorite
 
 	// Shares  > /api/file/share
 	share := file.Group("/share", middlewares.Auth)

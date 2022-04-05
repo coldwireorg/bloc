@@ -2,9 +2,13 @@ package storage
 
 import (
 	"bloc/utils/config"
+	"bufio"
+	"io"
 	"io/ioutil"
+	"log"
 	"mime/multipart"
 	"os"
+	"time"
 )
 
 /*
@@ -41,4 +45,33 @@ func (fs FilseSystem) Create(id string, file *multipart.FileHeader) error {
 
 func (fs FilseSystem) Delete(id string) error {
 	return os.Remove(fs.Path + "/" + id)
+}
+
+func (fs FilseSystem) Get(id string) (io.Reader, error) {
+	f, err := os.Open(fs.Path + "/" + id)
+	if err != nil {
+		return nil, err
+	}
+
+	reader := bufio.NewReader(f)
+	buf := make([]byte, 16)
+
+	go func() {
+		for {
+			_, err := reader.Read(buf)
+			if err != nil {
+				if err != io.EOF {
+					log.Fatal(err)
+				}
+				break
+			}
+		}
+	}()
+
+	go func() {
+		time.Sleep(2 * time.Second)
+		f.Close()
+	}()
+
+	return reader, err
 }

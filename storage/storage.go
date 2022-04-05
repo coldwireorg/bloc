@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"io"
 	"mime/multipart"
 )
 
@@ -9,6 +10,7 @@ var Driver Interface
 type Interface interface {
 	Create(id string, file *multipart.FileHeader) error
 	Delete(id string) error
+	Get(id string) (io.Reader, error)
 }
 
 type Drivers struct {

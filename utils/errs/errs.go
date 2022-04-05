@@ -8,7 +8,10 @@ var (
 	Success = utils.Reponse{
 		Success: true,
 	}
-
+	Permission = utils.Reponse{
+		Success: false,
+		Error:   "Forbiden",
+	}
 	Internal = utils.Reponse{
 		Success: false,
 		Error:   "Internal server error",

@@ -3,6 +3,7 @@ package storage
 import (
 	"bloc/utils/config"
 	"context"
+	"io"
 	"mime/multipart"
 
 	"github.com/minio/minio-go/v7"
@@ -60,4 +61,9 @@ func (s S3) Create(id string, file *multipart.FileHeader) error {
 
 func (s S3) Delete(id string) error {
 	return s.RemoveObject(context.Background(), config.Conf.Storage.S3.Bucket, id, minio.RemoveObjectOptions{})
+}
+
+func (s S3) Get(id string) (io.Reader, error) {
+	// TODO
+	return nil, nil
 }
