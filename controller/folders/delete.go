@@ -41,12 +41,10 @@ func cascade(f models.Folder) error {
 }
 
 func Delete(c *fiber.Ctx) error {
-	request := struct {
-		Id string `json:"id"`
-	}{}
+	id := c.Params("id")
 
 	folder := models.Folder{
-		Id: request.Id,
+		Id: id,
 	}
 
 	token, err := tokens.Parse(c.Cookies("token"))

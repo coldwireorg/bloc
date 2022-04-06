@@ -3,22 +3,22 @@ package models
 import (
 	"bloc/database"
 	"context"
-	"log"
 
 	"github.com/georgysavva/scany/pgxscan"
+	"github.com/rs/zerolog/log"
 )
 
 type Folder struct {
-	Id     string `db:"id" json:"id"`
-	Name   string `db:"name" json:"name"`
-	Owner  string `db:"f_owner" json:"owner"`
-	Parent string `db:"f_parent" json:"parent"`
+	Id     string `db:"id"     json:"id"`
+	Name   string `db:"name"   json:"name"`
+	Owner  string `db:"owner"  json:"owner"`
+	Parent string `db:"parent" json:"parent"`
 }
 
 func (f Folder) Create() error {
 	_, err := database.DB.Exec(context.Background(), `INSERT INTO folders(id, name) VALUES($1, $2)`, f.Id, f.Name)
 	if err != nil {
-		log.Println(err.Error())
+		log.Err(err).Msg(err.Error())
 		return err
 	}
 
@@ -28,7 +28,7 @@ func (f Folder) Create() error {
 func (f Folder) Delete() error {
 	_, err := database.DB.Exec(context.Background(), `DELETE FROM folders WHERE id = $1`, f.Id)
 	if err != nil {
-		log.Println(err.Error())
+		log.Err(err).Msg(err.Error())
 		return err
 	}
 
@@ -40,13 +40,13 @@ func (f Folder) Find() (Folder, error) {
 	err := pgxscan.Get(context.Background(), database.DB, &folder, `SELECT
 	id,
 	name,
-	f_owner AS owner,
-	f_parent AS parent,
+	coalesce(f_owner, '') AS owner,
+	coalesce(f_parent, '') AS parent
 		FROM folders
 			WHERE id = $1`, f.Id)
 
 	if err != nil {
-		log.Println(err.Error())
+		log.Err(err).Msg(err.Error())
 		return folder, err
 	}
 
@@ -64,13 +64,14 @@ func (f Folder) GetChildrens() ([]Folder, []File, error) {
 	fldrRows, err := database.DB.Query(context.Background(), `SELECT
 	id,
 	name,
-	f_owner AS owner
+	f_owner AS owner,
+	f_parent AS parent
 		FROM folders
 			WHERE f_parent = $1 AND f_owner = $2`, f.Id, f.Owner)
 
 	err = pgxscan.ScanAll(&folders, fldrRows)
 	if err != nil {
-		log.Println(err.Error())
+		log.Err(err).Msg(err.Error())
 		return []Folder{}, []File{}, err
 	}
 
@@ -80,13 +81,14 @@ func (f Folder) GetChildrens() ([]Folder, []File, error) {
 	size,
 	is_favorite,
 	key,
-	f_owner AS owner
+	f_owner AS owner,
+	f_parent AS parent
 		FROM files
 			WHERE f_parent = $1 AND f_owner = $2`, f.Id, f.Owner)
 
 	err = pgxscan.ScanAll(&files, filesRows)
 	if err != nil {
-		log.Println(err.Error())
+		log.Err(err).Msg(err.Error())
 		return []Folder{}, []File{}, err
 	}
 
@@ -96,7 +98,7 @@ func (f Folder) GetChildrens() ([]Folder, []File, error) {
 func (f Folder) SetOwner(username string) error {
 	_, err := database.DB.Exec(context.Background(), `UPDATE folders SET f_owner = $1 WHERE id = $2`, username, f.Id)
 	if err != nil {
-		log.Println(err.Error())
+		log.Err(err).Msg(err.Error())
 		return err
 	}
 
@@ -106,7 +108,7 @@ func (f Folder) SetOwner(username string) error {
 func (f Folder) SetParent(parent string) error {
 	_, err := database.DB.Exec(context.Background(), `UPDATE folders SET f_parent = $1 WHERE id = $2`, parent, f.Id)
 	if err != nil {
-		log.Println(err.Error())
+		log.Err(err).Msg(err.Error())
 		return err
 	}
 

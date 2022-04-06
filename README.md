@@ -115,6 +115,14 @@ Coldwire' internal infrastructure is using nomad, so for those who are using it 
 >
 > Method: **GET**<br>
 > Endpoint: **/api/user/auth/logout**<br>
+>
+> Response *50X*:
+> ```json
+> {
+>   "success": false,
+>   "error": "<error message>",
+> }
+> ```
 
 > ### Oauth2 callback
 > Description: Callback address to specify in the oauth2 provider<br>
@@ -126,7 +134,7 @@ Coldwire' internal infrastructure is using nomad, so for those who are using it 
 > Description: Upload a file<br>
 >
 > Method: **POST**<br>
-> Endpoint: **/api/user/auth/login**<br>
+> Endpoint: **/api/file**<br>
 > Form values:
 >   - *file* : the file to upload
 >   - *parent* : Parent directory
@@ -139,6 +147,142 @@ Coldwire' internal infrastructure is using nomad, so for those who are using it 
 >   "data": {
 >     "id": "<file id>"
 >   }
+> }
+> ```
+>
+> Response *50X*:
+> ```json
+> {
+>   "success": false,
+>   "error": "<error message>",
+> }
+> ```
+
+> ### Download file
+> Description: Download a file from its ID<br>
+>
+> Method: **GET**<br>
+> Endpoint: **/api/file/donwload/:id**<br>
+>
+> Response *50X*:
+> ```json
+> {
+>   "success": false,
+>   "error": "<error message>",
+> }
+> ```
+
+> ### Delete file
+> Description: Delet a file from its ID<br>
+>
+> Method: **DELETE**<br>
+> Endpoint: **/api/file/:id**<br>
+>
+> Response *200*:
+> ```json
+> {
+>   "success": true
+> }
+> ```
+
+> ### Move file
+> Description: Download a file from its ID<br>
+>
+> Method: **PUT**<br>
+> Endpoint: **/api/file/:id**<br>
+> Body:
+> ```json
+> {
+>   "parent": "<new parent folder>",
+> }
+> ```
+>
+> Response *200*:
+> ```json
+> {
+>   "success": true
+> }
+> ```
+>
+> Response *50X*:
+> ```json
+> {
+>   "success": false,
+>   "error": "<error message>",
+> }
+> ```
+
+> ### Create folder
+> Description: Create a new folder<br>
+>
+> Method: **POST**<br>
+> Endpoint: **/api/folder**<br>
+> Body:
+> ```json
+> {
+>	  "name": "<folder name>",
+>	  "parent": "<parent folder>"
+> }
+> ```
+>
+> Response *200*:
+> ```json
+> {
+>   "success": true,
+>   "data": {
+>     "id":"<new folder id>",
+>     "name": "<new folder name>",
+>     "parent": "<parent of the new folder>",
+>     "owner": "<owner of the new folder>"
+>   }
+> }
+> ```
+>
+> Response *50X*:
+> ```json
+> {
+>   "success": false,
+>   "error": "<error message>",
+> }
+> ```
+
+> ### Move folder
+> Description: Move a folder to another one<br>
+>
+> Method: **PUT**<br>
+> Endpoint: **/api/folder/:id**<br>
+> Body:
+> ```json
+> {
+>	  "parent": "<new parent folder>",
+> }
+> ```
+>
+> Response *200*:
+> ```json
+> {
+>   "success": true
+> }
+> ```
+>
+> Response *50X*:
+> ```json
+> {
+>   "success": false,
+>   "error": "<error message>",
+> }
+> ```
+
+> ### Delete folder
+> Description: Delete a folder and its childrens files and folders<br>
+>
+> Method: **PUT**<br>
+> Endpoint: **/api/folder/:id**<br>
+>
+> Response *200*:
+> ```json
+> {
+>   "success": true
 > }
 > ```
 >

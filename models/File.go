@@ -9,14 +9,14 @@ import (
 )
 
 type File struct {
-	Id         string
-	Name       string
-	Size       int
-	Type       string
-	IsFavorite bool
-	Key        string
-	Parent     string
-	Owner      string
+	Id         string `db:"id" json:"id"`
+	Name       string `db:"name" json:"name"`
+	Size       int    `db:"size" json:"size"`
+	Type       string `db:"type" json:"type"`
+	IsFavorite bool   `db:"is_favorite" json:"is_favorite"`
+	Key        string `db:"key" json:"key"`
+	Parent     string `db:"parent" json:"parent"`
+	Owner      string `db:"owner" json:"owner"`
 }
 
 func (f File) Create() error {
@@ -48,7 +48,8 @@ func (f File) Find() (File, error) {
 	type,
 	is_favorite,
 	key,
-	f_owner AS owner
+	f_owner AS owner,
+	f_parent AS parent
 		FROM files
 			WHERE id = $1`, f.Id)
 

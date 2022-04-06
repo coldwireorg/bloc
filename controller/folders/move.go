@@ -10,13 +10,24 @@ import (
 )
 
 func Move(c *fiber.Ctx) error {
+	id := c.Params("id")
+
+	if id == "" {
+		return c.Status(500).JSON(errs.BadRequest)
+	}
+
 	request := struct {
-		Id     string `json:"id"`
 		Parent string `json:"parent"`
 	}{}
 
+	err := c.BodyParser(&request)
+	if err != nil {
+		log.Err(err).Msg(err.Error())
+		return c.JSON(errs.Internal)
+	}
+
 	folder := models.Folder{
-		Id: request.Id,
+		Id: id,
 	}
 
 	token, err := tokens.Parse(c.Cookies("token"))

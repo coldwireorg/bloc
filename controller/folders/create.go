@@ -15,8 +15,13 @@ func Create(c *fiber.Ctx) error {
 	request := struct {
 		Name   string `json:"name"`
 		Parent string `json:"parent"`
-		Owner  string `json:"owner"`
 	}{}
+
+	err := c.BodyParser(&request)
+	if err != nil {
+		log.Err(err).Msg(err.Error())
+		return c.JSON(errs.Internal)
+	}
 
 	parent := models.Folder{
 		Id: request.Parent,
@@ -42,7 +47,7 @@ func Create(c *fiber.Ctx) error {
 		Id:     shortuuid.New(),
 		Name:   request.Name,
 		Parent: request.Parent,
-		Owner:  request.Owner,
+		Owner:  token.Username,
 	}
 
 	err = folder.Create()
@@ -50,6 +55,9 @@ func Create(c *fiber.Ctx) error {
 		log.Err(err).Msg(err.Error())
 		return c.JSON(errs.Internal)
 	}
+
+	folder.SetOwner(folder.Owner)
+	folder.SetParent(folder.Parent)
 
 	return c.JSON(utils.Reponse{
 		Success: true,
