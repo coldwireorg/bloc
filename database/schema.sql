@@ -25,8 +25,7 @@ CREATE TABLE IF NOT EXISTS folders (
 
 ALTER TABLE users ADD
   FOREIGN KEY (f_root_folder)
-    REFERENCES folders(id)
-      ON DELETE CASCADE;
+    REFERENCES folders(id);
 
 CREATE TABLE IF NOT EXISTS files (
   id          VARCHAR(256) PRIMARY KEY NOT NULL UNIQUE,
@@ -45,6 +44,7 @@ CREATE TABLE IF NOT EXISTS files (
   CONSTRAINT c_parent
     FOREIGN KEY (f_parent)
       REFERENCES folders(id)
+        ON DELETE CASCADE
 );
 
 
