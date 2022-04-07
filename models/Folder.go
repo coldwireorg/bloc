@@ -67,7 +67,7 @@ func (f Folder) GetChildrens() ([]Folder, []File, error) {
 	f_owner AS owner,
 	f_parent AS parent
 		FROM folders
-			WHERE f_parent = $1 AND f_owner = $2`, f.Id, f.Owner)
+			WHERE f_parent = $1`, f.Id)
 
 	err = pgxscan.ScanAll(&folders, fldrRows)
 	if err != nil {
@@ -84,7 +84,7 @@ func (f Folder) GetChildrens() ([]Folder, []File, error) {
 	f_owner AS owner,
 	f_parent AS parent
 		FROM files
-			WHERE f_parent = $1 AND f_owner = $2`, f.Id, f.Owner)
+			WHERE f_parent = $1`, f.Id)
 
 	err = pgxscan.ScanAll(&files, filesRows)
 	if err != nil {
