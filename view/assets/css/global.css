@@ -102,3 +102,13 @@ a, span {
 	text-decoration: none;
 	color: var(--complementary-white);
 }
+
+.fx-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.fx-column {
+  display: flex;
+  flex-direction: column;
+}
