@@ -22,8 +22,8 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    height: 200px;
-    width: 220px;
+    height: 90px;
+    width: 190px;
     margin: 0 auto;
     background: var(--complementary-white-5);
     border-radius: 8px;
@@ -66,8 +66,8 @@
   .storage-quota {
     display: flex;
     flex-direction: row;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
     gap: 8px;
     font-size: 8px;
   }
