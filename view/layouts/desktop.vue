@@ -1,5 +1,6 @@
 <template>
   <div>
+    <ColdwireLogo />
     <AppSideBar />
     <div class="appcontent-rsp-container">
       <Nuxt />
