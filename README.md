@@ -159,6 +159,13 @@ Coldwire' internal infrastructure is using nomad, so for those who are using it 
 > }
 > ```
 
+> ### Oauth2 url
+> Description: Get oauth2 authentication url<br>
+>
+> Method: **GET**<br>
+> Endpoint: **/api/user/auth/oauth2**<br>
+
+
 > ### Oauth2 callback
 > Description: Callback address to specify in the oauth2 provider<br>
 >

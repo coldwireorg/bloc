@@ -3,6 +3,7 @@ package users
 import (
 	"bloc/models"
 	"bloc/utils"
+	"bloc/utils/config"
 	"bloc/utils/errs"
 	"time"
 
@@ -11,6 +12,30 @@ import (
 	"github.com/lithammer/shortuuid/v4"
 	"github.com/rs/zerolog/log"
 )
+
+func Oauth2(c *fiber.Ctx) error {
+	if config.Conf.Oauth.Server != "" {
+		redirect, err := cwauth.AuthURL()
+		if err != nil {
+			log.Err(err).Msg(err.Error())
+		}
+
+		return c.JSON(utils.Reponse{
+			Success: true,
+			Data: fiber.Map{
+				"enabled":      true,
+				"redirect_url": redirect,
+			},
+		})
+	} else {
+		return c.JSON(utils.Reponse{
+			Success: true,
+			Data: fiber.Map{
+				"enabled": false,
+			},
+		})
+	}
+}
 
 func Oauth2Callback(c *fiber.Ctx) error {
 	code := c.Query("code")

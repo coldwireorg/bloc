@@ -31,9 +31,9 @@ quota = "4G"
   url = "unix:///var/run/polar.sock"
   secret = "acab"
 
-#[oauth]
-#server = "https://auth.coldwire.org/"
-#id = "bloc"
-#secret = ""
-#callback = "https://bloc.coldwire.org/api/user/auth/oauth2/callback"
+[oauth]
+server = "https://auth.coldwire.org/"
+id = "bloc"
+secret = ""
+callback = "https://bloc.coldwire.org/api/user/auth/oauth2/callback"
   

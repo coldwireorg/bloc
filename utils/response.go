@@ -1,7 +1,7 @@
 package utils
 
 type Reponse struct {
-	Success bool
-	Data    interface{}
-	Error   interface{}
+	Success bool        `json:"success"`
+	Data    interface{} `json:"data"`
+	Error   interface{} `json:"error"`
 }
