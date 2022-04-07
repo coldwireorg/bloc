@@ -207,6 +207,27 @@ Coldwire' internal infrastructure is using nomad, so for those who are using it 
 > }
 > ```
 
+> ### Toogle favorite
+> Description: Set if a file is favorite or not<br>
+>
+> Method: **PUT**<br>
+> Endpoint: **/api/file/favorite/:id**<br>
+>
+> Response *200*:
+> ```json
+> {
+>   "success": true
+> }
+> ```
+>
+> Response *50X*:
+> ```json
+> {
+>   "success": false,
+>   "error": "<error message>",
+> }
+> ```
+
 > ### Delete file
 > Description: Delet a file from its ID<br>
 >

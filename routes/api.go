@@ -32,7 +32,7 @@ func Api(app *fiber.App) {
 	file.Delete("/:id", files.Delete)         // Delete file
 	file.Get("/list/:folder", files.List)     // List files in a folder
 	file.Get("/download/:id", files.Download) // Download file
-	file.Put("/favorite", files.Favorite)     // set favorite
+	file.Put("/favorite/:id", files.Favorite) // set favorite
 
 	// folders > /api/folder
 	folder := api.Group("/folder", middlewares.Auth)

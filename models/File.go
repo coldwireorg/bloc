@@ -9,14 +9,14 @@ import (
 )
 
 type File struct {
-	Id         string `db:"id" json:"id"`
-	Name       string `db:"name" json:"name"`
-	Size       int    `db:"size" json:"size"`
-	Type       string `db:"type" json:"type"`
+	Id         string `db:"id"          json:"id"`
+	Name       string `db:"name"        json:"name"`
+	Size       int    `db:"size"        json:"size"`
+	Type       string `db:"type"        json:"type"`
 	IsFavorite bool   `db:"is_favorite" json:"is_favorite"`
-	Key        string `db:"key" json:"key"`
-	Parent     string `db:"parent" json:"parent"`
-	Owner      string `db:"owner" json:"owner"`
+	Key        string `db:"key"         json:"key"`
+	Parent     string `db:"parent"      json:"parent"`
+	Owner      string `db:"owner"       json:"owner"`
 }
 
 func (f File) Create() error {
@@ -73,6 +73,16 @@ func (f File) SetOwner(username string) error {
 
 func (f File) SetParent(parent string) error {
 	_, err := database.DB.Exec(context.Background(), `UPDATE files SET f_parent = $1 WHERE id = $2`, parent, f.Id)
+	if err != nil {
+		log.Println(err.Error())
+		return err
+	}
+
+	return err
+}
+
+func (f File) SetFavorite() error {
+	_, err := database.DB.Exec(context.Background(), `UPDATE files SET is_favorite = $1 WHERE id = $2`, f.IsFavorite, f.Id)
 	if err != nil {
 		log.Println(err.Error())
 		return err

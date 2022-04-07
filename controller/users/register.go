@@ -62,6 +62,7 @@ func Register(c *fiber.Ctx) error {
 
 	// Create root folder
 	root.Create()
+	usr.Root = root.Id // add root folder to the user for the response
 
 	err = usr.Create()
 	if err != nil {
