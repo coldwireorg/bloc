@@ -50,12 +50,13 @@ CREATE TABLE IF NOT EXISTS files (
 
 CREATE TABLE IF NOT EXISTS shares (
   id          VARCHAR(256) PRIMARY KEY NOT NULL UNIQUE,
-  key         VARCHAR(256) NOT NULL,
+  key         VARCHAR(256) DEFAULT NULL,
   is_favorite BOOLEAN NOT NULL DEFAULT FALSE,
   is_file     BOOLEAN NOT NULL,  
   f_file      VARCHAR(256) DEFAULT NULL,
   f_folder    VARCHAR(256) DEFAULT NULL,
   f_owner     VARCHAR(24) NOT NULL,
+  f_parent    VARCHAR(256) NOT NULL,
 
   CONSTRAINT c_file
     FOREIGN KEY (f_file)
@@ -63,6 +64,10 @@ CREATE TABLE IF NOT EXISTS shares (
 
   CONSTRAINT c_folder
     FOREIGN KEY (f_folder)
+      REFERENCES folders(id),
+
+  CONSTRAINT c_parent
+    FOREIGN KEY (f_parent)
       REFERENCES folders(id),
 
   CONSTRAINT c_owner
