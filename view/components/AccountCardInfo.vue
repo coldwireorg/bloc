@@ -1,5 +1,5 @@
 <template>
-  <nuxt-link to="/setting" class="account-card-info">
+  <nuxt-link to="/settings" class="account-card-info">
     <div class="infos">
       <div class="userinfo">
         <div class="profile-icon">
