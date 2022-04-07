@@ -1,5 +1,5 @@
 <template>
-  <div class="account-card-info">
+  <nuxt-link to="/setting" class="account-card-info">
     <div class="infos">
       <div class="userinfo">
         <div class="profile-icon">
@@ -7,13 +7,15 @@
         </div>
         <h4>John Doe</h4>
       </div>
-      <img src="@/assets/img/disconnect16x16.svg" alt="Disconnect">
+      <nuxt-link class="disconnect-button" to="/">
+        <img src="@/assets/img/icons/disconnect16x16.svg" alt="Disconnect">
+      </nuxt-link>
     </div>
     <div class="storage-quota">
       <ProgressBar />
       350Mo/1Go
     </div>
-  </div>
+  </nuxt-link>
 </template>
 
 <style scoped>
@@ -29,6 +31,11 @@
     border-radius: 8px;
     padding: 1rem;
     box-sizing: border-box;
+    transition: 0.2s ease-in-out;
+  }
+
+  .account-card-info:hover {
+    box-shadow: 0px 0px 2px 0px rgba(255, 255, 255, 0.623);
   }
 
   .infos {
@@ -61,6 +68,18 @@
     top: 50%;
     left: 50%;
     transform: translateX(-50%) translateY(-50%);
+  }
+
+  .disconnect-button {
+    width: 16px;
+    height: 16px;
+    padding: 5px;
+    border-radius: 100%;
+    transition: 0.1s ease-in-out;
+  }
+
+  .disconnect-button:hover {
+    background: rgba(255, 255, 255, 0.055);
   }
 
   .storage-quota {
