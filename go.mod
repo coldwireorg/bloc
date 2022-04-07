@@ -19,8 +19,6 @@ require (
 )
 
 require (
-	github.com/georgysavva/scany v0.3.0 // indirect
-	github.com/jackc/pgx v3.6.2+incompatible // indirect
+	github.com/georgysavva/scany v0.3.0
 	github.com/jackc/pgx/v4 v4.14.1
-	github.com/jinzhu/gorm v1.9.12 // indirect
 )

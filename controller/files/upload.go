@@ -42,6 +42,7 @@ func Upload(c *fiber.Ctx) error {
 		Id:         shortuuid.New(),
 		Name:       fileMultipart.Filename,
 		Size:       int(fileMultipart.Size),
+		Type:       fileMultipart.Header["Content-Type"][0],
 		IsFavorite: false,
 		Key:        key,
 		Parent:     parent,

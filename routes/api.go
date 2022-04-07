@@ -3,6 +3,7 @@ package routes
 import (
 	"bloc/controller/files"
 	"bloc/controller/files/shares"
+	"bloc/controller/folders"
 	"bloc/controller/users"
 	"bloc/middlewares"
 
@@ -17,8 +18,8 @@ func Api(app *fiber.App) {
 
 	// Auth > /api/user/auth
 	auth := user.Group("/auth")
-	auth.All("/register", middlewares.Allowed, users.Register)
-	auth.All("/login", middlewares.Allowed, users.Login)
+	auth.Post("/register", middlewares.Allowed, users.Register)
+	auth.Post("/login", middlewares.Allowed, users.Login)
 	auth.All("/logout", users.Logout)
 
 	// Oauth2 > /api/user/auth/oauth2
@@ -28,10 +29,16 @@ func Api(app *fiber.App) {
 	// files > /api/file
 	file := api.Group("/file", middlewares.Auth)
 	file.Post("/", files.Upload)              // Upload file
-	file.Delete("/", files.Delete)            // Delete file
+	file.Delete("/:id", files.Delete)         // Delete file
 	file.Get("/list/:folder", files.List)     // List files in a folder
 	file.Get("/download/:id", files.Download) // Download file
 	file.Put("/favorite", files.Favorite)     // set favorite
+
+	// folders > /api/folder
+	folder := api.Group("/folder", middlewares.Auth)
+	folder.Post("/", folders.Create)
+	folder.Put("/:id", folders.Move)
+	folder.Delete("/:id", folders.Delete) // Delete file
 
 	// Shares  > /api/file/share
 	share := file.Group("/share", middlewares.Auth)

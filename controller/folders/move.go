@@ -1,8 +1,7 @@
-package files
+package folders
 
 import (
 	"bloc/models"
-	"bloc/storage"
 	"bloc/utils/errs"
 	"bloc/utils/tokens"
 
@@ -10,10 +9,24 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-func Delete(c *fiber.Ctx) error {
+func Move(c *fiber.Ctx) error {
 	id := c.Params("id")
 
-	file := models.File{
+	if id == "" {
+		return c.Status(500).JSON(errs.BadRequest)
+	}
+
+	request := struct {
+		Parent string `json:"parent"`
+	}{}
+
+	err := c.BodyParser(&request)
+	if err != nil {
+		log.Err(err).Msg(err.Error())
+		return c.JSON(errs.Internal)
+	}
+
+	folder := models.Folder{
 		Id: id,
 	}
 
@@ -23,7 +36,7 @@ func Delete(c *fiber.Ctx) error {
 		return c.Status(500).JSON(errs.BadRequest)
 	}
 
-	f, err := file.Find()
+	f, err := folder.Find()
 	if err != nil {
 		log.Err(err).Msg(err.Error())
 		return c.JSON(errs.Internal)
@@ -33,17 +46,11 @@ func Delete(c *fiber.Ctx) error {
 		return c.JSON(errs.Permission)
 	}
 
-	err = f.Delete()
+	err = f.SetParent(request.Parent)
 	if err != nil {
 		log.Err(err).Msg(err.Error())
 		return c.JSON(errs.Internal)
 	}
 
-	err = storage.Driver.Delete(f.Id)
-	if err != nil {
-		log.Err(err).Msg(err.Error())
-		return err
-	}
-
-	return c.SendStatus(302)
+	return c.JSON(errs.Success)
 }
