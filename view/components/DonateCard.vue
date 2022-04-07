@@ -2,7 +2,7 @@
   <div class="donate-card">
     Help us to keep your service alive!
     <div class="donate-bottom">
-      <ButtonAction is-external="true" link="https://coldwire.org/about#donate" text="Donate">
+      <ButtonAction is-external link="https://coldwire.org/about#donate" text="Donate">
         <img src="@/assets/img/icons/heart-around16x16.svg" alt="">
       </ButtonAction>
       How we spend it
