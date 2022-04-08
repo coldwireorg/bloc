@@ -27,7 +27,17 @@ func List(c *fiber.Ctx) error {
 		Owner: token.Username,
 	}
 
-	folders, files, err := fldr.GetChildrens()
+	fldr, err = fldr.Find()
+	if err != nil {
+		log.Err(err).Msg(err.Error())
+		return c.JSON(errs.Internal)
+	}
+
+	if fldr.Owner != token.Username {
+		return c.JSON(errs.Permission)
+	}
+
+	folders, files, shares, err := fldr.GetChildrens()
 	if err != nil {
 		log.Err(err).Msg(err.Error())
 		return c.JSON(errs.Internal)
@@ -38,6 +48,7 @@ func List(c *fiber.Ctx) error {
 		Data: fiber.Map{
 			"files":  files,
 			"folder": folders,
+			"shares": shares,
 		},
 	})
 }

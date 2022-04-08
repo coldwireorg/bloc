@@ -16,7 +16,7 @@ var Queue []string
 
 func toDelete(id string) error {
 	f := models.Folder{Id: id}
-	folders, files, err := f.GetChildrens()
+	folders, files, shares, err := f.GetChildrens()
 	if err != nil {
 		return err
 	}
@@ -27,6 +27,14 @@ func toDelete(id string) error {
 		}
 
 		Queue = append(Queue, "fi:"+fi.Id)
+	}
+
+	for _, sh := range shares {
+		if len(shares) == 0 {
+			break
+		}
+
+		Queue = append(Queue, "sh:"+sh.Id)
 	}
 
 	for _, fo := range folders {
@@ -64,6 +72,13 @@ func cascade(f models.Folder) error {
 		} else if t[0] == "fo" {
 			fo := models.Folder{Id: t[1]}
 			err := fo.Delete()
+			if err != nil {
+				log.Err(err).Msg(err.Error())
+				return err
+			}
+		} else if t[0] == "sh" {
+			sh := models.Share{Id: t[1]}
+			err := sh.Revoke()
 			if err != nil {
 				log.Err(err).Msg(err.Error())
 				return err

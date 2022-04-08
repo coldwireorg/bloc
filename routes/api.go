@@ -43,7 +43,7 @@ func Api(app *fiber.App) {
 
 	// Shares  > /api/share
 	share := api.Group("/share", middlewares.Auth)
-	share.Post("/", shares.Add)      // Share a file
-	share.Delete("/", shares.Revoke) // Revoke a share
-	share.Get("/", shares.List)      // List share
+	share.Post("/", shares.Add)         // Share a file
+	share.Delete("/:id", shares.Revoke) // Revoke a share
+	share.Get("/", shares.List)         // List share
 }

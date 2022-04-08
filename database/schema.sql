@@ -1,4 +1,8 @@
-CREATE TYPE authmode AS ENUM ('LOCAL', 'OAUTH2');
+DO $$ BEGIN
+    CREATE TYPE authmode AS ENUM ('LOCAL', 'OAUTH2');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
 CREATE TABLE IF NOT EXISTS users (
   username      VARCHAR(24) PRIMARY KEY NOT NULL UNIQUE,
@@ -17,10 +21,12 @@ CREATE TABLE IF NOT EXISTS folders (
   f_parent  VARCHAR(256) DEFAULT NULL,
 
   FOREIGN KEY (f_parent)
-    REFERENCES folders(id),
+    REFERENCES folders(id)
+      ON DELETE CASCADE,
 
   FOREIGN KEY (f_owner)
     REFERENCES users(username)
+      ON DELETE CASCADE
 );
 
 ALTER TABLE users ADD
@@ -39,7 +45,8 @@ CREATE TABLE IF NOT EXISTS files (
 
   CONSTRAINT c_owner
     FOREIGN KEY (f_owner)
-      REFERENCES users(username),
+      REFERENCES users(username)
+        ON DELETE CASCADE,
 
   CONSTRAINT c_parent
     FOREIGN KEY (f_parent)
@@ -50,27 +57,31 @@ CREATE TABLE IF NOT EXISTS files (
 
 CREATE TABLE IF NOT EXISTS shares (
   id          VARCHAR(256) PRIMARY KEY NOT NULL UNIQUE,
-  key         VARCHAR(256) DEFAULT NULL,
+  key         VARCHAR(256) NOT NULL,
   is_favorite BOOLEAN NOT NULL DEFAULT FALSE,
   is_file     BOOLEAN NOT NULL,  
   f_file      VARCHAR(256) DEFAULT NULL,
   f_folder    VARCHAR(256) DEFAULT NULL,
   f_owner     VARCHAR(24) NOT NULL,
-  f_parent    VARCHAR(256) NOT NULL,
+  f_parent    VARCHAR(256) DEFAULT NULL,
 
   CONSTRAINT c_file
     FOREIGN KEY (f_file)
-      REFERENCES files(id),
+      REFERENCES files(id)
+        ON DELETE CASCADE,
 
   CONSTRAINT c_folder
     FOREIGN KEY (f_folder)
-      REFERENCES folders(id),
+      REFERENCES folders(id)
+        ON DELETE CASCADE,
 
   CONSTRAINT c_parent
     FOREIGN KEY (f_parent)
-      REFERENCES folders(id),
+      REFERENCES folders(id)
+        ON DELETE CASCADE,
 
   CONSTRAINT c_owner
     FOREIGN KEY (f_owner)
       REFERENCES users(username)
+        ON DELETE CASCADE
 );

@@ -54,10 +54,11 @@ func (f Folder) Find() (Folder, error) {
 }
 
 // Get files and folders that are childrens of this directory
-func (f Folder) GetChildrens() ([]Folder, []File, error) {
+func (f Folder) GetChildrens() ([]Folder, []File, []Share, error) {
 	var (
 		folders []Folder
 		files   []File
+		shares  []Share
 		err     error
 	)
 
@@ -72,7 +73,7 @@ func (f Folder) GetChildrens() ([]Folder, []File, error) {
 	err = pgxscan.ScanAll(&folders, fldrRows)
 	if err != nil {
 		log.Err(err).Msg(err.Error())
-		return []Folder{}, []File{}, err
+		return folders, files, shares, err
 	}
 
 	filesRows, err := database.DB.Query(context.Background(), `SELECT
@@ -89,10 +90,28 @@ func (f Folder) GetChildrens() ([]Folder, []File, error) {
 	err = pgxscan.ScanAll(&files, filesRows)
 	if err != nil {
 		log.Err(err).Msg(err.Error())
-		return []Folder{}, []File{}, err
+		return folders, files, shares, err
 	}
 
-	return folders, files, err
+	shrRows, err := database.DB.Query(context.Background(), `SELECT
+	id,
+	is_favorite,
+	key,
+	is_file,
+	f_file   AS file,
+	f_folder AS folder,
+	f_owner  AS owner,
+	f_parent AS parent
+		FROM shares
+			WHERE f_parent = $1`, f.Parent)
+
+	err = pgxscan.ScanAll(&shares, shrRows)
+	if err != nil {
+		log.Err(err).Msg(err.Error())
+		return folders, files, shares, err
+	}
+
+	return folders, files, shares, err
 }
 
 func (f Folder) SetOwner(username string) error {
