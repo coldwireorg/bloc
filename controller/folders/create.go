@@ -2,8 +2,7 @@ package folders
 
 import (
 	"bloc/models"
-	"bloc/utils"
-	"bloc/utils/errs"
+	errors "bloc/utils/errs"
 	"bloc/utils/tokens"
 
 	"github.com/gofiber/fiber/v2"
@@ -19,8 +18,7 @@ func Create(c *fiber.Ctx) error {
 
 	err := c.BodyParser(&request)
 	if err != nil {
-		log.Err(err).Msg(err.Error())
-		return c.JSON(errs.Internal)
+		return errors.Handle(c, errors.ErrBody, err)
 	}
 
 	parent := models.Folder{
@@ -30,17 +28,16 @@ func Create(c *fiber.Ctx) error {
 	token, err := tokens.Parse(c.Cookies("token"))
 	if err != nil {
 		log.Err(err).Msg(err.Error())
-		return c.Status(500).JSON(errs.BadRequest)
+		return errors.Handle(c, errors.ErrAuth, err)
 	}
 
 	p, err := parent.Find()
 	if err != nil {
-		log.Err(err).Msg(err.Error())
-		return c.JSON(errs.Internal)
+		return errors.Handle(c, errors.ErrDatabaseNotFound, err)
 	}
 
 	if p.Owner != token.Username {
-		return c.JSON(errs.Permission)
+		return errors.Handle(c, errors.ErrPermission, err)
 	}
 
 	folder := models.Folder{
@@ -52,15 +49,18 @@ func Create(c *fiber.Ctx) error {
 
 	err = folder.Create()
 	if err != nil {
-		log.Err(err).Msg(err.Error())
-		return c.JSON(errs.Internal)
+		return errors.Handle(c, errors.ErrDatabaseCreate, err)
 	}
 
-	folder.SetOwner(folder.Owner)
-	folder.SetParent(folder.Parent)
+	err = folder.SetOwner(folder.Owner)
+	if err != nil {
+		return errors.Handle(c, errors.ErrDatabaseCreate, err)
+	}
 
-	return c.JSON(utils.Reponse{
-		Success: true,
-		Data:    folder,
-	})
+	err = folder.SetParent(folder.Parent)
+	if err != nil {
+		return errors.Handle(c, errors.ErrDatabaseCreate, err)
+	}
+
+	return errors.Handle(c, errors.Success, folder)
 }

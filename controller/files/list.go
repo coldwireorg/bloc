@@ -2,24 +2,21 @@ package files
 
 import (
 	"bloc/models"
-	"bloc/utils"
-	"bloc/utils/errs"
+	errors "bloc/utils/errs"
 	"bloc/utils/tokens"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/rs/zerolog/log"
 )
 
 func List(c *fiber.Ctx) error {
 	folder := c.Params("folder")
 	if folder == "" {
-		return c.JSON(errs.BadRequest)
+		return errors.Handle(c, errors.ErrRequest)
 	}
 
 	token, err := tokens.Parse(c.Cookies("token")) // Parse user's JWT token
 	if err != nil {
-		log.Err(err).Msg(err.Error())
-		return c.Status(500).JSON(errs.BadRequest)
+		return errors.Handle(c, errors.ErrAuth, err)
 	}
 
 	fldr := models.Folder{
@@ -29,26 +26,21 @@ func List(c *fiber.Ctx) error {
 
 	fldr, err = fldr.Find()
 	if err != nil {
-		log.Err(err).Msg(err.Error())
-		return c.JSON(errs.Internal)
+		return errors.Handle(c, errors.ErrDatabaseNotFound, err)
 	}
 
 	if fldr.Owner != token.Username {
-		return c.JSON(errs.Permission)
+		return errors.Handle(c, errors.ErrPermission, err)
 	}
 
 	folders, files, shares, err := fldr.GetChildrens()
 	if err != nil {
-		log.Err(err).Msg(err.Error())
-		return c.JSON(errs.Internal)
+		return errors.Handle(c, errors.ErrUnknown, err)
 	}
 
-	return c.JSON(utils.Reponse{
-		Success: true,
-		Data: fiber.Map{
-			"files":  files,
-			"folder": folders,
-			"shares": shares,
-		},
+	return errors.Handle(c, errors.Success, fiber.Map{
+		"files":  files,
+		"folder": folders,
+		"shares": shares,
 	})
 }

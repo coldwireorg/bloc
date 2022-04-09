@@ -3,11 +3,10 @@ package files
 import (
 	"bloc/models"
 	"bloc/storage"
-	"bloc/utils/errs"
+	errors "bloc/utils/errs"
 	"bloc/utils/tokens"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/rs/zerolog/log"
 )
 
 func Delete(c *fiber.Ctx) error {
@@ -19,31 +18,27 @@ func Delete(c *fiber.Ctx) error {
 
 	token, err := tokens.Parse(c.Cookies("token"))
 	if err != nil {
-		log.Err(err).Msg(err.Error())
-		return c.Status(500).JSON(errs.BadRequest)
+		return errors.Handle(c, errors.ErrAuth, err)
 	}
 
 	f, err := file.Find()
 	if err != nil {
-		log.Err(err).Msg(err.Error())
-		return c.JSON(errs.Internal)
+		return errors.Handle(c, errors.ErrDatabaseNotFound, err)
 	}
 
 	if f.Owner != token.Username {
-		return c.JSON(errs.Permission)
+		return errors.Handle(c, errors.ErrPermission)
 	}
 
 	err = f.Delete()
 	if err != nil {
-		log.Err(err).Msg(err.Error())
-		return c.JSON(errs.Internal)
+		return errors.Handle(c, errors.ErrDatabaseRemove, err)
 	}
 
 	err = storage.Driver.Delete(f.Id)
 	if err != nil {
-		log.Err(err).Msg(err.Error())
-		return err
+		return errors.Handle(c, errors.ErrUnknown, err)
 	}
 
-	return c.SendStatus(302)
+	return errors.Handle(c, errors.Success)
 }

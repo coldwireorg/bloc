@@ -3,7 +3,7 @@ package folders
 import (
 	"bloc/models"
 	"bloc/storage"
-	"bloc/utils/errs"
+	errors "bloc/utils/errs"
 	"bloc/utils/tokens"
 	"strings"
 
@@ -98,33 +98,29 @@ func Delete(c *fiber.Ctx) error {
 
 	token, err := tokens.Parse(c.Cookies("token"))
 	if err != nil {
-		log.Err(err).Msg(err.Error())
-		return c.Status(500).JSON(errs.BadRequest)
+		return errors.Handle(c, errors.ErrAuth, err)
 	}
 
 	f, err := folder.Find()
 	if err != nil {
-		log.Err(err).Msg(err.Error())
-		return c.JSON(errs.Internal)
+		return errors.Handle(c, errors.ErrDatabaseNotFound, err)
 	}
 
 	if f.Owner != token.Username {
-		return c.JSON(errs.Permission)
+		return errors.Handle(c, errors.ErrPermission, err)
 	}
 
 	// Delete every sub-files and sub-folders
 	err = cascade(f)
 	if err != nil {
-		log.Err(err).Msg(err.Error())
-		return c.JSON(errs.Internal)
+		return errors.Handle(c, errors.ErrUnknown, err)
 	}
 
 	// When everything is deleted: delete the folder
 	err = f.Delete()
 	if err != nil {
-		log.Err(err).Msg(err.Error())
-		return c.JSON(errs.Internal)
+		return errors.Handle(c, errors.ErrDatabaseRemove, err)
 	}
 
-	return c.JSON(errs.Success)
+	return errors.Handle(c, errors.Success)
 }

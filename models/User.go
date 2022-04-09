@@ -10,11 +10,11 @@ import (
 
 type User struct {
 	Username   string `db:"username"      json:"username"`
-	Password   string `db:"password"      json:"password"`
+	Password   string `db:"password"      json:"-"`
 	AuthMode   string `db:"auth_mode"     json:"authMode"`
 	PrivateKey string `db:"private_key"   json:"privateKey"`
 	PublicKey  string `db:"public_key"    json:"publicKey"`
-	Root       string `db:"root" json:"root"`
+	Root       string `db:"root"          json:"root"`
 }
 
 func (u User) Create() error {

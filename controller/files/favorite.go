@@ -2,17 +2,16 @@ package files
 
 import (
 	"bloc/models"
-	"bloc/utils/errs"
+	errors "bloc/utils/errs"
 	"bloc/utils/tokens"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/rs/zerolog/log"
 )
 
 func Favorite(c *fiber.Ctx) error {
 	id := c.Params("id")
 	if id == "" {
-		return c.JSON(errs.BadRequest)
+		return errors.Handle(c, errors.ErrRequest)
 	}
 
 	request := struct {
@@ -21,14 +20,12 @@ func Favorite(c *fiber.Ctx) error {
 
 	err := c.BodyParser(&request)
 	if err != nil {
-		log.Err(err).Msg(err.Error())
-		return c.JSON(errs.Internal)
+		return errors.Handle(c, errors.ErrBody, err)
 	}
 
 	token, err := tokens.Parse(c.Cookies("token")) // Parse user's JWT token
 	if err != nil {
-		log.Err(err).Msg(err.Error())
-		return c.Status(500).JSON(errs.BadRequest)
+		return errors.Handle(c, errors.ErrAuth, err)
 	}
 
 	file := models.File{
@@ -38,19 +35,17 @@ func Favorite(c *fiber.Ctx) error {
 
 	f, err := file.Find()
 	if err != nil {
-		log.Err(err).Msg(err.Error())
-		return c.Status(500).JSON(errs.Internal)
+		return errors.Handle(c, errors.ErrDatabaseNotFound, err)
 	}
 
 	if f.Owner != token.Username {
-		return c.JSON(errs.Permission)
+		return errors.Handle(c, errors.ErrPermission)
 	}
 
 	err = file.SetFavorite()
 	if err != nil {
-		log.Err(err).Msg(err.Error())
-		return c.Status(500).JSON(errs.Internal)
+		return errors.Handle(c, errors.ErrDatabaseCreate, err)
 	}
 
-	return c.JSON(errs.Success)
+	return errors.Handle(c, errors.Success)
 }

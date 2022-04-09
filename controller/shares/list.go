@@ -2,8 +2,7 @@ package shares
 
 import (
 	"bloc/models"
-	"bloc/utils"
-	"bloc/utils/errs"
+	errors "bloc/utils/errs"
 	"bloc/utils/tokens"
 
 	"github.com/gofiber/fiber/v2"
@@ -41,7 +40,7 @@ func List(c *fiber.Ctx) error {
 	token, err := tokens.Parse(c.Cookies("token"))
 	if err != nil {
 		log.Err(err).Msg(err.Error())
-		return c.Status(500).JSON(errs.BadRequest)
+		return errors.Handle(c, errors.ErrAuth, err)
 	}
 
 	share := models.Share{
@@ -51,7 +50,7 @@ func List(c *fiber.Ctx) error {
 	shares, err := share.List()
 	if err != nil {
 		log.Err(err).Msg(err.Error())
-		return c.JSON(errs.Internal)
+		return errors.Handle(c, errors.ErrDatabaseNotFound, err)
 	}
 
 	for _, sh := range shares {
@@ -68,8 +67,7 @@ func List(c *fiber.Ctx) error {
 			fi := models.File{Id: sh.File}
 			fi, err := fi.Find()
 			if err != nil {
-				log.Err(err).Msg(err.Error())
-				return c.JSON(errs.Internal)
+				return errors.Handle(c, errors.ErrDatabaseNotFound, err)
 			}
 
 			r.File = responseFile{
@@ -85,8 +83,7 @@ func List(c *fiber.Ctx) error {
 			fo := models.Folder{Id: sh.Folder}
 			fo, err := fo.Find()
 			if err != nil {
-				log.Err(err).Msg(err.Error())
-				return c.JSON(errs.Internal)
+				return errors.Handle(c, errors.ErrDatabaseNotFound, err)
 			}
 
 			r.Folder = responseFolder{
@@ -101,8 +98,5 @@ func List(c *fiber.Ctx) error {
 		res = append(res, r)
 	}
 
-	return c.JSON(utils.Reponse{
-		Success: true,
-		Data:    res,
-	})
+	return errors.Handle(c, errors.Success, res)
 }

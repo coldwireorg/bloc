@@ -4,35 +4,28 @@ import (
 	"bloc/models"
 	"bloc/utils"
 	"bloc/utils/config"
-	"bloc/utils/errs"
+	errors "bloc/utils/errs"
 	"time"
 
 	"codeberg.org/coldwire/cwauth"
 	"github.com/gofiber/fiber/v2"
 	"github.com/lithammer/shortuuid/v4"
-	"github.com/rs/zerolog/log"
 )
 
 func Oauth2(c *fiber.Ctx) error {
 	if config.Conf.Oauth.Server != "" {
 		redirect, err := cwauth.AuthURL()
 		if err != nil {
-			log.Err(err).Msg(err.Error())
+			return errors.Handle(c, errors.ErrAuth, err)
 		}
 
-		return c.JSON(utils.Reponse{
-			Success: true,
-			Data: fiber.Map{
-				"enabled":      true,
-				"redirect_url": redirect,
-			},
+		return errors.Handle(c, errors.Success, fiber.Map{
+			"enabled":      true,
+			"redirect_url": redirect,
 		})
 	} else {
-		return c.JSON(utils.Reponse{
-			Success: true,
-			Data: fiber.Map{
-				"enabled": false,
-			},
+		return errors.Handle(c, errors.Success, fiber.Map{
+			"enabled": false,
 		})
 	}
 }
@@ -44,7 +37,7 @@ func Oauth2Callback(c *fiber.Ctx) error {
 
 	tokenIsValid := cwauth.CheckToken(idToken, accessToken)
 	if !tokenIsValid {
-		return c.JSON(errs.Internal)
+		return errors.Handle(c, errors.ErrAuthPassword)
 	}
 
 	claims := cwauth.GetClaims(idToken)
@@ -58,6 +51,7 @@ func Oauth2Callback(c *fiber.Ctx) error {
 		Username:   claims.Username,
 		PrivateKey: claims.PrivateKey,
 		PublicKey:  claims.PublicKey,
+		AuthMode:   "OAUTH2",
 	}
 
 	exist := usr.Exist()
@@ -68,8 +62,7 @@ func Oauth2Callback(c *fiber.Ctx) error {
 		// create user
 		err := usr.Create()
 		if err != nil {
-			log.Err(err).Msg(err.Error())
-			return c.JSON(errs.Internal)
+			return errors.Handle(c, errors.ErrAuth, err)
 		}
 
 		usr.SetRoot(root.Id)        // Set root folder of the user
@@ -79,5 +72,5 @@ func Oauth2Callback(c *fiber.Ctx) error {
 	utils.SetCookie(c, "access_token", accessToken, time.Now().Add(time.Hour*6))
 	utils.SetCookie(c, "token", idToken, time.Now().Add(time.Hour*6))
 
-	return c.Redirect("/app")
+	return c.Redirect("/")
 }

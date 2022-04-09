@@ -32,8 +32,8 @@ quota = "4G"
   secret = "acab"
 
 [oauth]
-server = "https://auth.coldwire.org/"
+server = "http://127.0.0.1:3003/"
 id = "bloc"
-secret = ""
-callback = "https://bloc.coldwire.org/api/user/auth/oauth2/callback"
+secret = "acab1312"
+callback = "http://127.0.0.1:3002/api/user/auth/oauth2/callback"
   

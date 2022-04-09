@@ -2,13 +2,11 @@ package shares
 
 import (
 	"bloc/models"
-	"bloc/utils"
-	"bloc/utils/errs"
+	errors "bloc/utils/errs"
 	"bloc/utils/tokens"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/lithammer/shortuuid/v4"
-	"github.com/rs/zerolog/log"
 )
 
 func Add(c *fiber.Ctx) error {
@@ -21,25 +19,22 @@ func Add(c *fiber.Ctx) error {
 
 	err := c.BodyParser(&request)
 	if err != nil {
-		log.Err(err).Msg(err.Error())
-		return c.JSON(errs.Internal)
+		return errors.Handle(c, errors.ErrBody, err)
 	}
 
 	token, err := tokens.Parse(c.Cookies("token"))
 	if err != nil {
-		log.Err(err).Msg(err.Error())
-		return c.Status(500).JSON(errs.BadRequest)
+		return errors.Handle(c, errors.ErrAuth, err)
 	}
 
 	file := models.File{Id: request.ToShare}
 	file, err = file.Find()
 	if err != nil {
-		log.Err(err).Msg(err.Error())
-		return c.JSON(errs.Internal)
+		return errors.Handle(c, errors.ErrDatabaseNotFound, err)
 	}
 
 	if file.Owner != token.Username {
-		return c.JSON(errs.Permission)
+		return errors.Handle(c, errors.ErrPermission, err)
 	}
 
 	share := models.Share{
@@ -53,8 +48,7 @@ func Add(c *fiber.Ctx) error {
 	// Create share
 	err = share.Add()
 	if err != nil {
-		log.Err(err).Msg(err.Error())
-		return c.JSON(errs.Internal)
+		return errors.Handle(c, errors.ErrDatabaseCreate, err)
 	}
 
 	if request.IsFile {
@@ -62,29 +56,23 @@ func Add(c *fiber.Ctx) error {
 
 		err = share.LinkFile()
 		if err != nil {
-			log.Err(err).Msg(err.Error())
-			return c.JSON(errs.Internal)
+			return errors.Handle(c, errors.ErrDatabaseCreate, err)
 		}
 
 		err = share.SetKey()
 		if err != nil {
-			log.Err(err).Msg(err.Error())
-			return c.JSON(errs.Internal)
+			return errors.Handle(c, errors.ErrDatabaseCreate, err)
 		}
 	} else {
 		share.Folder = request.ToShare
 
 		err = share.LinkFolder()
 		if err != nil {
-			log.Err(err).Msg(err.Error())
-			return c.JSON(errs.Internal)
+			return errors.Handle(c, errors.ErrDatabaseCreate, err)
 		}
 	}
 
-	return c.JSON(utils.Reponse{
-		Success: true,
-		Data: fiber.Map{
-			"share": share.Id,
-		},
+	return errors.Handle(c, errors.Success, fiber.Map{
+		"share": share.Id,
 	})
 }

@@ -3,14 +3,13 @@ package users
 import (
 	"bloc/models"
 	"bloc/utils"
-	"bloc/utils/errs"
+	errors "bloc/utils/errs"
 	"bloc/utils/tokens"
 	"time"
 
 	"github.com/alexedwards/argon2id"
 	"github.com/gofiber/fiber/v2"
 	"github.com/lithammer/shortuuid/v4"
-	"github.com/rs/zerolog/log"
 )
 
 func Register(c *fiber.Ctx) error {
@@ -23,8 +22,7 @@ func Register(c *fiber.Ctx) error {
 
 	err := c.BodyParser(&request)
 	if err != nil {
-		log.Err(err).Msg(err.Error())
-		return c.JSON(errs.BadRequest)
+		return errors.Handle(c, errors.ErrBody, err)
 	}
 
 	var root = models.Folder{
@@ -40,22 +38,21 @@ func Register(c *fiber.Ctx) error {
 	}
 
 	if request.Username == "" {
-		return c.JSON(errs.BadRequest)
+		return errors.Handle(c, errors.ErrBody, err)
 	}
 
 	if request.PrivateKey == "" || request.PublicKey == "" {
-		return c.JSON(errs.AuthNoKeypair)
+		return errors.Handle(c, errors.ErrAuth)
 	}
 
 	exist := usr.Exist()
 	if exist {
-		return c.JSON(errs.AuthNameAlreadyTaken)
+		return errors.Handle(c, errors.ErrAuthExist)
 	}
 
 	hash, err := argon2id.CreateHash(request.Password, argon2id.DefaultParams)
 	if err != nil {
-		log.Err(err).Msg(err.Error())
-		return c.JSON(errs.Internal)
+		return errors.Handle(c, errors.ErrAuth, err)
 	}
 
 	usr.Password = hash
@@ -66,12 +63,18 @@ func Register(c *fiber.Ctx) error {
 
 	err = usr.Create()
 	if err != nil {
-		log.Err(err).Msg(err.Error())
-		return c.JSON(errs.Internal)
+		return errors.Handle(c, errors.ErrDatabaseCreate, err)
 	}
 
-	usr.SetRoot(root.Id)        // Set root folder of the user
-	root.SetOwner(usr.Username) // Set the owner of the root folder
+	err = usr.SetRoot(root.Id) // Set root folder of the user
+	if err != nil {
+		return errors.Handle(c, errors.ErrDatabaseCreate, err)
+	}
+
+	err = root.SetOwner(usr.Username) // Set the owner of the root folder
+	if err != nil {
+		return errors.Handle(c, errors.ErrDatabaseCreate, err)
+	}
 
 	token := tokens.Generate(tokens.Token{
 		Username:   request.Username,
@@ -81,11 +84,8 @@ func Register(c *fiber.Ctx) error {
 
 	utils.SetCookie(c, "token", token, time.Now().Add(time.Hour*6))
 
-	return c.JSON(utils.Reponse{
-		Success: true,
-		Data: fiber.Map{
-			"token": token,
-			"user":  usr,
-		},
+	return errors.Handle(c, errors.Success, fiber.Map{
+		"token": token,
+		"user":  usr,
 	})
 }

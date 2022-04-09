@@ -2,18 +2,17 @@ package folders
 
 import (
 	"bloc/models"
-	"bloc/utils/errs"
+	errors "bloc/utils/errs"
 	"bloc/utils/tokens"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/rs/zerolog/log"
 )
 
 func Move(c *fiber.Ctx) error {
 	id := c.Params("id")
 
 	if id == "" {
-		return c.Status(500).JSON(errs.BadRequest)
+		return errors.Handle(c, errors.ErrRequest)
 	}
 
 	request := struct {
@@ -22,8 +21,7 @@ func Move(c *fiber.Ctx) error {
 
 	err := c.BodyParser(&request)
 	if err != nil {
-		log.Err(err).Msg(err.Error())
-		return c.JSON(errs.Internal)
+		return errors.Handle(c, errors.ErrBody, err)
 	}
 
 	folder := models.Folder{
@@ -32,25 +30,22 @@ func Move(c *fiber.Ctx) error {
 
 	token, err := tokens.Parse(c.Cookies("token"))
 	if err != nil {
-		log.Err(err).Msg(err.Error())
-		return c.Status(500).JSON(errs.BadRequest)
+		return errors.Handle(c, errors.ErrAuth, err)
 	}
 
 	f, err := folder.Find()
 	if err != nil {
-		log.Err(err).Msg(err.Error())
-		return c.JSON(errs.Internal)
+		return errors.Handle(c, errors.ErrDatabaseNotFound, err)
 	}
 
 	if f.Owner != token.Username {
-		return c.JSON(errs.Permission)
+		return errors.Handle(c, errors.ErrPermission, err)
 	}
 
 	err = f.SetParent(request.Parent)
 	if err != nil {
-		log.Err(err).Msg(err.Error())
-		return c.JSON(errs.Internal)
+		return errors.Handle(c, errors.ErrDatabaseCreate, err)
 	}
 
-	return c.JSON(errs.Success)
+	return errors.Handle(c, errors.Success)
 }

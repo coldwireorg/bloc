@@ -3,13 +3,12 @@ package users
 import (
 	"bloc/models"
 	"bloc/utils"
-	"bloc/utils/errs"
+	errors "bloc/utils/errs"
 	"bloc/utils/tokens"
 	"time"
 
 	"github.com/alexedwards/argon2id"
 	"github.com/gofiber/fiber/v2"
-	"github.com/rs/zerolog/log"
 )
 
 func Login(c *fiber.Ctx) error {
@@ -23,8 +22,7 @@ func Login(c *fiber.Ctx) error {
 
 	err := c.BodyParser(&request)
 	if err != nil {
-		log.Err(err).Msg(err.Error())
-		return c.JSON(errs.Internal)
+		return errors.Handle(c, errors.ErrBody, err)
 	}
 
 	var user = models.User{
@@ -33,18 +31,16 @@ func Login(c *fiber.Ctx) error {
 
 	user, err = user.Find()
 	if err != nil {
-		log.Err(err).Msg(err.Error())
-		return c.JSON(errs.Internal)
+		return errors.Handle(c, errors.ErrAuth, err)
 	}
 
 	isValid, err := argon2id.ComparePasswordAndHash(request.Password, user.Password)
 	if !isValid {
-		return c.JSON(errs.AuthBadPassword)
+		return errors.Handle(c, errors.ErrAuthPassword)
 	}
 
 	if err != nil {
-		log.Err(err).Msg(err.Error())
-		return c.JSON(errs.Internal)
+		return errors.Handle(c, errors.ErrAuth, err)
 	}
 
 	token := tokens.Generate(tokens.Token{
@@ -55,11 +51,8 @@ func Login(c *fiber.Ctx) error {
 
 	utils.SetCookie(c, "token", token, time.Now().Add(time.Hour*6))
 
-	return c.JSON(utils.Reponse{
-		Success: true,
-		Data: fiber.Map{
-			"token": token,
-			"user":  user,
-		},
+	return errors.Handle(c, errors.Success, fiber.Map{
+		"token": token,
+		"user":  user,
 	})
 }
