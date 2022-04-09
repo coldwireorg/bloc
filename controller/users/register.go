@@ -45,7 +45,11 @@ func Register(c *fiber.Ctx) error {
 		return errors.Handle(c, errors.ErrAuth)
 	}
 
-	exist := usr.Exist()
+	exist, err := usr.Exist()
+	if err != nil {
+		return errors.Handle(c, errors.ErrAuth, err)
+	}
+
 	if exist {
 		return errors.Handle(c, errors.ErrAuthExist)
 	}

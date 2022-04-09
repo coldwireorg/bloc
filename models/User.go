@@ -57,8 +57,22 @@ func (u User) Find() (User, error) {
 	return user, err
 }
 
-func (u User) Exist() bool {
-	return false
+func (u User) Exist() (bool, error) {
+	var user User
+	err := pgxscan.Get(context.Background(), database.DB, &user, `SELECT
+	username
+		FROM users
+			WHERE username = $1`, u.Username)
+
+	if err != nil {
+		return false, err
+	}
+
+	if user.Username == "" {
+		return false, err
+	}
+
+	return true, err
 }
 
 func (u User) SetRoot(id string) error {

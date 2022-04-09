@@ -54,7 +54,11 @@ func Oauth2Callback(c *fiber.Ctx) error {
 		AuthMode:   "OAUTH2",
 	}
 
-	exist := usr.Exist()
+	exist, err := usr.Exist()
+	if err != nil {
+		return errors.Handle(c, errors.ErrAuth, err)
+	}
+
 	if !exist {
 		// Create root folder
 		root.Create()
