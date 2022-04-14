@@ -2,7 +2,7 @@
   <div
     class="icon-container"
     :class="{ 'rounded-button': type === 'rounded' }"
-    :style="{ 'height': size + 'px', 'width': size + 'px', 'padding': padding + 'px', 'background-color': (isHover && hover) ? 'var(--complementary-white-5)' : bgColor, 'border-radius': brdRadius + 'px' }"
+    :style="{ 'height': size + 'px', 'width': size + 'px', 'padding': padding + 'px', 'margin': margin + 'px', 'background-color': (isHover && hover) ? 'var(--complementary-white-5)' : bgColor, 'border-radius': brdRadius + 'px' }"
     @mouseover="isHover = true"
     @mouseleave="isHover = false"
   >
@@ -35,6 +35,11 @@ export default {
       default: 'normal'
     },
     padding: {
+      type: String,
+      required: false,
+      default: '0'
+    },
+    margin: {
       type: String,
       required: false,
       default: '0'
