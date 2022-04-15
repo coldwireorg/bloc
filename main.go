@@ -44,7 +44,7 @@ func init() {
 	storage.Init(config.Conf.Storage.Driver)
 
 	// Generate JWT token
-	tokens.Init()
+	tokens.Init(env.Get("JWT_KEY", ""))
 }
 
 func main() {
