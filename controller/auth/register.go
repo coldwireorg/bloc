@@ -1,10 +1,11 @@
-package users
+package auth
 
 import (
 	"bloc/models"
 	"bloc/utils"
 	errors "bloc/utils/errs"
 	"bloc/utils/tokens"
+	"regexp"
 	"time"
 
 	"github.com/alexedwards/argon2id"
@@ -23,6 +24,11 @@ func Register(c *fiber.Ctx) error {
 	err := c.BodyParser(&request)
 	if err != nil {
 		return errors.Handle(c, errors.ErrBody, err)
+	}
+
+	usernameValidation, _ := regexp.MatchString("[a-zA-Z]{3,}", request.Username)
+	if !usernameValidation {
+		return errors.Handle(c, errors.ErrBody, "invalid username")
 	}
 
 	var root = models.Folder{
