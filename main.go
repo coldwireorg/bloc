@@ -22,7 +22,7 @@ import (
 	"golang.org/x/oauth2"
 )
 
-//go:embed view/*
+//go:embed view/dist/*
 var views embed.FS
 
 func init() {
@@ -67,7 +67,7 @@ func main() {
 		// Load view as static website
 		app.Use("/", filesystem.New(filesystem.Config{
 			Root:       http.FS(views),
-			PathPrefix: "views/",
+			PathPrefix: "views/dist",
 			Browse:     true,
 		}))
 	} else {
