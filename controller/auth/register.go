@@ -5,6 +5,7 @@ import (
 	"bloc/utils"
 	errors "bloc/utils/errs"
 	"bloc/utils/tokens"
+	"log"
 	"regexp"
 	"time"
 
@@ -26,11 +27,6 @@ func Register(c *fiber.Ctx) error {
 		return errors.Handle(c, errors.ErrBody, err)
 	}
 
-	usernameValidation, _ := regexp.MatchString("[a-zA-Z]{3,}", request.Username)
-	if !usernameValidation {
-		return errors.Handle(c, errors.ErrBody, "invalid username")
-	}
-
 	var root = models.Folder{
 		Id:   shortuuid.New(),
 		Name: "root",
@@ -43,16 +39,22 @@ func Register(c *fiber.Ctx) error {
 		AuthMode:   "LOCAL",
 	}
 
-	if request.Username == "" {
+	usernameValidation, err := regexp.MatchString("[a-zA-Z]{3,}", request.Username)
+	if !usernameValidation {
 		return errors.Handle(c, errors.ErrBody, err)
 	}
 
-	if request.PrivateKey == "" || request.PublicKey == "" {
-		return errors.Handle(c, errors.ErrAuth)
+	if len(request.Password) <= 8 {
+		return errors.Handle(c, errors.ErrBody, "password too short or invalid")
+	}
+
+	if len(request.PrivateKey) < 32 || len(request.PublicKey) < 44 {
+		return errors.Handle(c, errors.ErrAuth, "keys are long enought/are not keys")
 	}
 
 	exist, err := usr.Exist()
-	if err != nil {
+	if !exist && err != nil {
+		log.Print("aaa")
 		return errors.Handle(c, errors.ErrAuth, err)
 	}
 

@@ -64,11 +64,11 @@ func (u User) Exist() (bool, error) {
 		FROM users
 			WHERE username = $1`, u.Username)
 
-	if err != nil {
-		return false, err
+	if pgxscan.NotFound(err) {
+		return false, nil
 	}
 
-	if user.Username == "" {
+	if err != nil {
 		return false, err
 	}
 
