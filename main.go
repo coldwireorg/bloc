@@ -7,16 +7,23 @@ import (
 	"bloc/utils/config"
 	"bloc/utils/env"
 	"bloc/utils/tokens"
+	"embed"
 	"flag"
+	"net/http"
 	"os"
 
 	"codeberg.org/coldwire/cwauth"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/filesystem"
+	"github.com/gofiber/fiber/v2/middleware/proxy"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"golang.org/x/oauth2"
 )
+
+//go:embed view/*
+var views embed.FS
 
 func init() {
 	// Configure logs
@@ -55,6 +62,25 @@ func main() {
 
 	// Include cors
 	app.Use(cors.New())
+
+	if env.Get("DEV_FRONT_URL", "") == "" {
+		// Load view as static website
+		app.Use("/", filesystem.New(filesystem.Config{
+			Root:       http.FS(views),
+			PathPrefix: "views/",
+			Browse:     true,
+		}))
+	} else {
+		app.Get("/*", func(c *fiber.Ctx) error {
+			url := env.Get("DEV_FRONT_URL", "") + c.Params("*")
+			err := proxy.Do(c, url)
+			if err != nil {
+				return err
+			}
+
+			return nil
+		})
+	}
 
 	// Setup API routes
 	routes.Api(app)

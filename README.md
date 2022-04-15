@@ -48,12 +48,25 @@ If you think a little bit, you understand that there is a big problem, if an adm
 
 An exemple config file can be found [here](./exemple.config.toml)
 
+### Develop
+
+```sh
+# In a terminal
+cd view && npm i && npm run dev # Ru frontend server
+
+# In a second terminal
+DEV_FRONT_URL=http://127.0.0.1:3000/ go run main.go -config config.toml
+```
+
 ### Building
 
 just clone the repo and build with go <1.16
 
 ```sh
 git clone https://codeberg.org/coldwire/bloc && cd bloc
+cd view
+npm run build
+cd ..
 go build main.go
 ```
 
