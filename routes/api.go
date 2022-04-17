@@ -1,10 +1,10 @@
 package routes
 
 import (
+	"bloc/controller/auth"
 	"bloc/controller/files"
 	"bloc/controller/folders"
 	"bloc/controller/shares"
-	"bloc/controller/users"
 	"bloc/middlewares"
 
 	"github.com/gofiber/fiber/v2"
@@ -13,19 +13,16 @@ import (
 func Api(app *fiber.App) {
 	api := app.Group("/api")
 
-	// Users > /api/user
-	user := api.Group("/user")
-
 	// Auth > /api/user/auth
-	auth := user.Group("/auth")
-	auth.Post("/register", middlewares.Allowed, users.Register)
-	auth.Post("/login", middlewares.Allowed, users.Login)
-	auth.All("/logout", users.Logout)
+	authPoint := api.Group("/auth")
+	authPoint.Post("/register", middlewares.Allowed, auth.Register)
+	authPoint.Post("/login", middlewares.Allowed, auth.Login)
+	authPoint.All("/logout", auth.Logout)
 
 	// Oauth2 > /api/user/auth/oauth2
-	oauth := auth.Group("/oauth2")
-	oauth.Get("/", users.Oauth2)
-	oauth.Get("/callback", users.Oauth2Callback)
+	oauth := authPoint.Group("/oauth2")
+	oauth.Get("/", auth.Oauth2)
+	oauth.Get("/callback", auth.Oauth2Callback)
 
 	// files > /api/file
 	file := api.Group("/file", middlewares.Auth)

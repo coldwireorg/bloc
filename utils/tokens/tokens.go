@@ -85,11 +85,13 @@ func Parse(token string) (Token, error) {
 	return payload, nil
 }
 
-func Init() {
-	k, err := cwauth.GenerateRandomString(32)
-	if err != nil {
-		log.Fatal().Msg(err.Error())
+func Init(t string) {
+	if t == "" {
+		k, err := cwauth.GenerateRandomString(32)
+		if err != nil {
+			log.Fatal().Msg(err.Error())
+		}
+		key = &k
 	}
-
-	key = &k
+	key = &t
 }
