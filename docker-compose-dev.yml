@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  database:
+    image: postgres:14.1-alpine
+    restart: always
+    container_name: bloc-db
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=bloc
+      - POSTGRES_PASSWORD=4llc0ps4re64st4rds
+      - POSTGRES_DB=bloc
+    volumes:
+      - db:/var/lib/postgresql/data
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: bloc-api:latest
+    container_name: bloc-api
+    depends_on:
+      - database
+    ports:
+      - 3000:3000
+    environment:
+      - BLOC_DATABASE_DRIVER=postgres
+      - BLOC_DATABASE_ADDRESS=bloc-db
+      - BLOC_DATABASE_PORT=5432
+      - BLOC_DATABASE_USER=bloc
+      - BLOC_DATABASE_PASSWORD=4llc0ps4re64st4rds
+      - BLOC_DATABASE_NAME=bloc
+    stdin_open: true
+    tty: true
+
+volumes:
+  db:
+    driver: local
