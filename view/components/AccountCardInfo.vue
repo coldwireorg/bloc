@@ -1,18 +1,19 @@
 <template>
-  <nuxt-link to="/settings" class="account-card-info">
-    <div class="infos">
-      <div class="userinfo">
+  <nuxt-link to="/settings" class="fx-column account-card-info">
+    <div class="fx-row infos">
+      <div class="fx-row userinfo">
         <div class="profile-icon">
           <h6>J</h6>
         </div>
         <h4>John Doe</h4>
       </div>
-      <nuxt-link class="disconnect-button" to="/">
-        <img src="@/assets/img/icons/disconnect16x16.svg" alt="Disconnect">
+      <nuxt-link to="/">
+        <Icon name="disconnect" padding="5" hover brd-radius="100" />
+        <!-- <img src="@/assets/img/icons/disconnect16x16.svg" alt="Disconnect"> -->
       </nuxt-link>
     </div>
-    <div class="storage-quota">
-      <ProgressBar />
+    <div class="fx-row storage-quota">
+      <ProgressBar type="determinate" fill-level="33" />
       350Mo/1Go
     </div>
   </nuxt-link>
@@ -21,8 +22,6 @@
 <style scoped>
   .account-card-info {
     position: relative;
-    display: flex;
-    flex-direction: column;
     justify-content: space-between;
     height: 90px;
     width: 190px;
@@ -31,23 +30,19 @@
     border-radius: 8px;
     padding: 1rem;
     box-sizing: border-box;
-    transition: 0.2s ease-in-out;
+    transition: 0.15s ease-in-out;
   }
 
   .account-card-info:hover {
-    box-shadow: 0px 0px 2px 0px rgba(255, 255, 255, 0.623);
+    box-shadow: 0px 0px 2.4px 0px rgba(255, 255, 255, 0.623);
   }
 
   .infos {
-    display: flex;
-    flex-direction: row;
     justify-content: space-between;
     align-items: center;
   }
 
   .userinfo {
-    display: flex;
-    flex-direction: row;
     justify-content: flex-start;
     align-items: center;
     gap: 1rem;
@@ -83,8 +78,6 @@
   }
 
   .storage-quota {
-    display: flex;
-    flex-direction: row;
     align-items: center;
     justify-content: center;
     gap: 8px;
