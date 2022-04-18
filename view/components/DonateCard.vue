@@ -3,9 +3,11 @@
     Help us to keep your service alive !
     <div class="donate-bottom">
       <ButtonAction is-external link="https://coldwire.org/about#donate" text="Donate">
-        <img src="@/assets/img/icons/heart-around16x16.svg" alt="">
+        <Icon name="heart-around" />
       </ButtonAction>
-      How we spend it
+      <a href="#">
+        How we spend it
+      </a>
     </div>
   </div>
 </template>
@@ -35,5 +37,9 @@
     gap: 1rem;
     font-size: 12px;
     line-height: 15px;
+  }
+
+  .donate-bottom a {
+    opacity: 0.5;
   }
 </style>
