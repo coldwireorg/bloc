@@ -35,7 +35,7 @@ export const mimeTypeToAppType = (_mimetype) => {
   } else if (/audio\/*/.test(_mimetype)) {
     return 'audio'
   } else if (/application\/vnd.ms-excel*/.test(_mimetype) || _mimetype === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || _mimetype === 'application/vnd.openxmlformats-officedocument.spreadsheetml.template') {
-    return 'classor'
+    return 'binder'
   } else if (/application\/vnd\.openxmlformats-officedocument.presentationml\.*/.test(_mimetype) || _mimetype === 'application/vnd.ms-powerpoint') {
     return 'presentation'
   } else if (/application\/vnd\.ms-word\.*/.test(_mimetype) || /application\/vnd\.openxmlformats-officedocument\.wordprocessingml\.*/.test(_mimetype || /application\/msword*/.test(_mimetype))) {
