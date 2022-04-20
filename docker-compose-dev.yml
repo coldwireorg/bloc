@@ -31,7 +31,6 @@ services:
       - BLOC_DATABASE_USER=bloc
       - BLOC_DATABASE_PASSWORD=4llc0ps4re64st4rds
       - BLOC_DATABASE_NAME=bloc
-      - DEV_FRONT_URL=http://127.0.0.1:3000/
     stdin_open: true
     tty: true
 
