@@ -39,7 +39,7 @@ Algorithms used :
   - XChaCha20-Poly1305
   - Blake
 
-#### User's key pair
+#### **User's key pair**
 
 the user's key pair was generated with asymetric **ECIES ed25519** algorithm and is used to decrypt and encrypt files.
 
@@ -49,11 +49,11 @@ The private key is stored but encrypted with **ChaCha20-Poly1305** with blake3 h
 
 The public key is not encrypted and can be get by anyone, it will be used for files transfer or others future features.
 
-#### User's password
+#### **User's password**
 
 the user's password is hashed with **argon2 ID** function and is used to authenticate the user on the application to get a session token.
 
-#### How file are encrypted ?
+#### **How file are encrypted ?**
 
 1. A 256bits key is generated
 2. The file is encrypted chunk by chunk using **XChaCha20-Poly1305** with the generated key
