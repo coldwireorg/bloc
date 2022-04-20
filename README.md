@@ -15,8 +15,8 @@
 - [Roadmap](#roadmap)
 - [Quickstart](#quickstart)
   - [Requirements](#requirements)
-  - [You want to contribute to the code ?](#)
-  - [You want to deploy bloc in production ?](#)
+  - [You want to contribute to the code ?](#you-want-to-contribute-to-the-code)
+  - [You want to deploy bloc in production ?](#you-want-to-deploy-bloc-in-production)
 - [License](#license)
 
 ## Introduction
@@ -24,8 +24,6 @@
 Bloc is mainly made for people who need a safe place for their datas, like movements and activists organizing in risk zones (ARZ) or even journalists and whistleblowers needing a safe place to store their documents, proofs, etc.
 
 ## Security and Details
-
-
 
 ### Resilience
 
@@ -147,32 +145,31 @@ $ cd bloc
 
 ```sh
 # Clone repository
-git clone https://codeberg.org/coldwire/bloc && cd bloc
+$ git clone https://codeberg.org/coldwire/bloc && cd bloc
 
-# In a terminal
-cd view && npm i && npm run dev # Run frontend server
+# Run frontend server
+(bloc) $ cd view && yarn install && yarn run dev && cd ..
 
 # In a second terminal
-DEV_FRONT_URL=http://127.0.0.1:3000/ go run main.go -config config.toml # Run the backend while proxying requests to the frontend so you can dev without rebuilding the frontend everytime :)
+(bloc) $ DEV_FRONT_URL=http://127.0.0.1:3000/ go run main.go -config config.toml # Run the backend while proxying requests to the frontend so you can dev without rebuilding the frontend everytime :)
 ```
 
 ### You want to deploy bloc in production ?
 
 #### Config
 
-An exemple config file can be found [here](./exemple.config.toml)
-
+An exemple config file can be found [here](./example.config.toml)
 
 #### Building
 
 just clone the repo and build with go <1.16
 
 ```sh
-git clone https://codeberg.org/coldwire/bloc && cd bloc
-cd view
-npm run build
-cd ..
-go build main.go
+$ git clone https://codeberg.org/coldwire/bloc && cd bloc
+(bloc) $ cd view
+(bloc/view) $ yarn run generate
+(bloc/view) $ cd ..
+(bloc) $ go build main.go
 ```
 
 then run it
@@ -182,4 +179,4 @@ then run it
 
 ## License
 
-You can find the license [here](LICENSE.md)
+You can find the license [here](LICENSE)
