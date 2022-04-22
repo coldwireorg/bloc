@@ -95,7 +95,6 @@ func Register(c *fiber.Ctx) error {
 	utils.SetCookie(c, "token", token, time.Now().Add(time.Hour*6))
 
 	return errors.Handle(c, errors.Success, fiber.Map{
-		"token": token,
-		"user":  usr,
+		"user": usr,
 	})
 }
