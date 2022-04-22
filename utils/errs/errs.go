@@ -69,6 +69,11 @@ var (
 	}
 
 	/* DATABASE */
+	ErrDatabaseGeneric = Response{
+		Status:  500,
+		Code:    "ERROR_DB",
+		Message: "An error occured during database request",
+	}
 	ErrDatabaseCreate = Response{
 		Status:  500,
 		Code:    "ERROR_DB",

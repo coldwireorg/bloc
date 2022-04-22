@@ -89,9 +89,7 @@ func Register(c *fiber.Ctx) error {
 	}
 
 	token := tokens.Generate(tokens.Token{
-		Username:   request.Username,
-		PrivateKey: request.PrivateKey,
-		PublicKey:  request.PublicKey,
+		Username: request.Username,
 	}, 12*time.Hour)
 
 	utils.SetCookie(c, "token", token, time.Now().Add(time.Hour*6))

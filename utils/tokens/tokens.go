@@ -12,9 +12,7 @@ import (
 var key *string
 
 type Token struct {
-	Username   string `json:"username"`
-	PrivateKey string `json:"private_key"`
-	PublicKey  string `json:"public_key"`
+	Username string `json:"username"`
 }
 
 // Generate token:
@@ -63,9 +61,7 @@ func Parse(token string) (Token, error) {
 		claims := cwauth.GetClaims(token)
 
 		return Token{
-			Username:   claims.Username,
-			PrivateKey: claims.PrivateKey,
-			PublicKey:  claims.PublicKey,
+			Username: claims.Username,
 		}, nil
 	}
 
