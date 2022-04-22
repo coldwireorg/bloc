@@ -52,6 +52,11 @@
   --complementary-white: #f0f6fc;
 }
 
+html {
+  overflow: hidden;
+  height: 100%;
+}
+
 body {
   background-color: var(--complementary-gray-1);
 
@@ -64,6 +69,8 @@ body {
   color: var(--complementary-white);
 
 	margin: 0;
+  height: 100%;
+  overflow: auto;
 }
 
 h1 {

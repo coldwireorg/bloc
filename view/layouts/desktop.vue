@@ -2,8 +2,10 @@
   <div>
     <ColdwireLogo />
     <AppSideBarDesktop />
-    <div class="appcontent-rsp-container">
-      <Nuxt />
+    <div class="appcontent-position">
+      <div class="fx-column appcontent-main">
+        <Nuxt />
+      </div>
     </div>
   </div>
 </template>
@@ -15,12 +17,18 @@ export default {
 </script>
 
 <style scoped>
-  .appcontent-rsp-container {
+  .appcontent-position {
     position: absolute;
     top: 0;
     left: 254px;
     right: 0;
     bottom: 0;
     background-color: #161B22;
+  }
+
+  .appcontent-main {
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    padding: 1rem 2rem;
   }
 </style>
