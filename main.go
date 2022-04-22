@@ -71,7 +71,7 @@ func main() {
 			Browse:     true,
 		}))
 	} else {
-		app.Get("/", func(c *fiber.Ctx) error {
+		app.Get("/*", func(c *fiber.Ctx) error {
 			url := env.Get("DEV_FRONT_URL", "") + c.Params("*")
 			err := proxy.Do(c, url)
 			if err != nil {
