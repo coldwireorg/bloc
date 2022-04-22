@@ -7,7 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func Allowed(c *fiber.Ctx) error {
+func IsOauthEnabled(c *fiber.Ctx) error {
 	if config.Conf.Oauth.Server != "" {
 		return c.JSON(utils.Reponse{
 			Success: false,

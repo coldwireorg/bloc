@@ -9,10 +9,10 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-func Auth(c *fiber.Ctx) error {
+func IsAuthenticated(c *fiber.Ctx) error {
 	// Check if oauth is configured
 	if config.Conf.Oauth.Server != "" {
-		return oauth(c)
+		return checkOauth2(c)
 	}
 
 	token := c.Cookies("token")

@@ -5,7 +5,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func oauth(c *fiber.Ctx) error {
+func checkOauth2(c *fiber.Ctx) error {
 	idToken := c.Cookies("token")
 	accesToken := c.Cookies("access_token")
 
