@@ -32,6 +32,7 @@ func Api(app *fiber.App) {
 	// files > /api/file
 	fileRoute := api.Group("/file", middlewares.IsAuthenticated)
 	fileRoute.Post("/", files.Upload)              // Upload file
+	fileRoute.Put("/:id", files.Move)              // Move file
 	fileRoute.Delete("/:id", files.Delete)         // Delete file
 	fileRoute.Get("/list/:folder", files.List)     // List files in a folder
 	fileRoute.Get("/download/:id", files.Download) // Download file
