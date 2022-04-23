@@ -2,8 +2,8 @@
   <div class="fx-column file-card">
     <div class="top-view">
       <div class="fx-row icon-container">
-        <Icon name="star-card16x16" type="rounded" padding="5" brd-radius="100" hover />
-        <Icon name="option-card16x16" type="rounded" padding="5" brd-radius="100" hover />
+        <Icon name="favorite-noactive16x16" type="rounded" padding="5" brd-radius="100" hover />
+        <Icon name="option-filecard16x16" type="rounded" padding="5" brd-radius="100" hover />
       </div>
     </div>
     <div class="fx-column bottom-view">
