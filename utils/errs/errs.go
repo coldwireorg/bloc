@@ -43,7 +43,7 @@ func Handle(c *fiber.Ctx, args ...interface{}) error {
 var (
 	/* INTERNAL */
 	Success = Response{
-		Status:  300,
+		Status:  200,
 		Code:    "SUCCESS",
 		Message: "Request treated with success!",
 	}

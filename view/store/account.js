@@ -51,12 +51,16 @@ export const actions = {
   },
 
   async fetchFileUpload ({ commit, state }, _payload) {
+    const _v = new Uint32Array(25.6)
+    const _entropy = crypto.getRandomValues(_v).buffer
+    const _key = [...new Uint8Array(_entropy)].map(x => x.toString(16).padStart(2, '0')).join('')
+
     const _data = new FormData()
     _data.append('file', _payload.file)
     _data.append('parent', state.currentDir)
-    _data.append('key', '')
+    _data.append('key', _key)
     await this.$axios({
-      url: '/api/files',
+      url: '/api/file',
       method: 'POST',
       withCredential: true,
       headers: {
