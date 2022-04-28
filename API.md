@@ -44,7 +44,7 @@ The API alway return 4 fields:
 > To get the authorization url
 
 
-### Files **/api/files** (require a valid JWT token in a cookie)
+### Files **/api/file** (require a valid JWT token in a cookie)
 > ### **POST** /
 > Upload a file
 > Form inputs:
@@ -77,6 +77,9 @@ The API alway return 4 fields:
 >   "parent": "<ID of the parent folder>"
 > }
 > ```
+
+> ### **GET** /:folder
+> List sub-folders
 
 > ### **PUT** /:id
 > Move folder to another one

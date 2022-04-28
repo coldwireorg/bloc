@@ -5,6 +5,7 @@ import (
 	"context"
 
 	"github.com/georgysavva/scany/pgxscan"
+	"github.com/jackc/pgx/v4"
 	"github.com/rs/zerolog/log"
 )
 
@@ -107,19 +108,42 @@ func (s Share) Find() (Share, error) {
 }
 
 func (s Share) List() ([]Share, error) {
-	var shares []Share
+	var (
+		shares  []Share
+		req     string
+		err     error
+		shrRows pgx.Rows
+	)
 
-	shrRows, err := database.DB.Query(context.Background(), `SELECT
-	id,
-	is_favorite,
-	key,
-	is_file,
-	f_owner AS owner,
-	coalesce(f_file, '')   AS file,
-	coalesce(f_folder, '') AS folder,
-	coalesce(f_parent, '') AS parent
-		FROM shares
-			WHERE f_owner = $1`, s.Owner)
+	if s.Parent != "" {
+		req = `SELECT
+		id,
+		is_favorite,
+		key,
+		is_file,
+		f_owner AS owner,
+		coalesce(f_file, '')   AS file,
+		coalesce(f_folder, '') AS folder,
+		f_parent AS parent
+			FROM shares
+				WHERE f_owner = $1 AND f_parent = $2`
+
+		shrRows, err = database.DB.Query(context.Background(), req, s.Owner, s.Parent)
+	} else {
+		req = `SELECT
+		id,
+		is_favorite,
+		key,
+		is_file,
+		f_owner AS owner,
+		coalesce(f_file, '')   AS file,
+		coalesce(f_folder, '') AS folder,
+		coalesce(f_parent, '') AS parent
+			FROM shares
+				WHERE f_owner = $1`
+
+		shrRows, err = database.DB.Query(context.Background(), req, s.Owner)
+	}
 
 	err = pgxscan.ScanAll(&shares, shrRows)
 	if err != nil {

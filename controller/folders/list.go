@@ -1,4 +1,4 @@
-package files
+package folders
 
 import (
 	"bloc/models"
@@ -24,10 +24,6 @@ func List(c *fiber.Ctx) error {
 		Owner: token.Username,
 	}
 
-	fi := models.File{
-		Parent: folder,
-	}
-
 	fldr, err = fldr.Find()
 	if err != nil {
 		return errors.Handle(c, errors.ErrDatabaseNotFound, err)
@@ -37,10 +33,10 @@ func List(c *fiber.Ctx) error {
 		return errors.Handle(c, errors.ErrPermission, err)
 	}
 
-	files, err := fi.List()
+	folders, err := fldr.Childrens()
 	if err != nil {
 		return errors.Handle(c, errors.ErrUnknown, err)
 	}
 
-	return errors.Handle(c, errors.Success, files)
+	return errors.Handle(c, errors.Success, folders)
 }

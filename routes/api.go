@@ -40,6 +40,7 @@ func Api(app *fiber.App) {
 
 	// folders > /api/folder
 	folderRoute := api.Group("/folder", middlewares.IsAuthenticated)
+	folderRoute.Get("/:folder", folders.List) // List childrens folders
 	folderRoute.Post("/", folders.Create)
 	folderRoute.Put("/:id", folders.Move)
 	folderRoute.Delete("/:id", folders.Delete) // Delete file
@@ -49,4 +50,5 @@ func Api(app *fiber.App) {
 	shareRoute.Post("/", shares.Add)         // Share a file
 	shareRoute.Delete("/:id", shares.Revoke) // Revoke a share
 	shareRoute.Get("/", shares.List)         // List share
+	shareRoute.Get("/:folder", shares.List)  // List share in a folder
 }

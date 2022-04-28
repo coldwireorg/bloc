@@ -15,8 +15,15 @@ import (
 var Queue []string
 
 func toDelete(id string) error {
-	f := models.Folder{Id: id}
-	folders, files, shares, err := f.GetChildrens()
+	folder := models.Folder{Id: id}
+	folders, err := folder.Childrens()
+
+	file := models.File{Parent: id}
+	files, err := file.List()
+
+	share := models.Share{Parent: id}
+	shares, err := share.List()
+
 	if err != nil {
 		return err
 	}

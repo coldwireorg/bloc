@@ -36,6 +36,7 @@ type response struct {
 
 func List(c *fiber.Ctx) error {
 	var res []response
+	folder := c.Params("folder")
 
 	token, err := tokens.Parse(c.Cookies("token"))
 	if err != nil {
@@ -45,6 +46,10 @@ func List(c *fiber.Ctx) error {
 
 	share := models.Share{
 		Owner: token.Username,
+	}
+
+	if folder != "" {
+		share.Parent = folder
 	}
 
 	shares, err := share.List()
